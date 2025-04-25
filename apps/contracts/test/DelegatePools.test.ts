@@ -11,6 +11,12 @@ const deploy = async () => {
 }
 
 describe('Tests', function () {
+  it('should be testing against mainnet fork', async function () {
+    const client = await hre.viem.getPublicClient()
+    const block = await client.getBlock()
+    expect(block.number).to.equal(22348000n)
+  })
+
   it('should return the token address', async function () {
     const { contract } = await loadFixture(deploy)
 

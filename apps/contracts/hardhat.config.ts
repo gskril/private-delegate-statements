@@ -11,6 +11,12 @@ if (!ETHERSCAN_API_KEY) throw new Error('ETHERSCAN_API_KEY must be set')
 
 const config: HardhatUserConfig = {
   networks: {
+    hardhat: {
+      forking: {
+        url: 'https://ethereum-rpc.publicnode.com',
+        blockNumber: 22348000,
+      },
+    },
     localhost: {
       accounts: [DEPLOYER_KEY],
     },
