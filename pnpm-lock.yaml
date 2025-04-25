@@ -26,6 +26,15 @@ importers:
       '@openzeppelin/contracts':
         specifier: ^5.2.0
         version: 5.2.0
+      '@semaphore-protocol/contracts':
+        specifier: ^4.9.2
+        version: 4.9.2
+      '@zk-kit/lean-imt.sol':
+        specifier: ^2.0.1
+        version: 2.0.1
+      poseidon-solidity:
+        specifier: ^0.0.5
+        version: 0.0.5
     devDependencies:
       '@nomicfoundation/hardhat-network-helpers':
         specifier: ^1.0.12
@@ -925,6 +934,7 @@ packages:
 
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
+    deprecated: 'The package is now available as "qr": npm install qr'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -985,6 +995,9 @@ packages:
 
   '@scure/bip39@1.5.0':
     resolution: {integrity: sha512-Dop+ASYhnrwm9+HA/HwXg7j2ZqM6yk2fyLWb5znexjctFY3+E+eU8cIWI0Pql0Qx4hPZCijlGq4OL71g+Uz30A==}
+
+  '@semaphore-protocol/contracts@4.9.2':
+    resolution: {integrity: sha512-/DnZ9SOzBsfv06Vz74djVHEPgZwIkdNt7e5Ay2612Rw22EwToedQX5ahJxfG9vbgHleOZ1iAV4y+XKmDhPpDBg==}
 
   '@sentry/core@5.30.0':
     resolution: {integrity: sha512-TmfrII8w1PQZSZgPpUESqjB+jC6MvZJZdLtE/0hZ+SrnKhW3x5WlYLvTXZpcWePYBku7rl2wn1RZu6uT0qCTeg==}
@@ -1365,6 +1378,9 @@ packages:
 
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
+
+  '@zk-kit/lean-imt.sol@2.0.1':
+    resolution: {integrity: sha512-2dy/wfzch2vy5QtDCFmQwN7E4GZP0xBcucTb2mfZoJP5V69cjPRdy6KcbS0YOcBMH/Lb7BgXLsekRYjh9JNKEw==}
 
   abbrev@1.0.9:
     resolution: {integrity: sha512-LEyx4aLEC3x6T0UguF6YILf+ntvmOaWsVfENmIW0E9H09vKlLDGelMjjSm0jkDHALj8A8quZ/HapKNigzwge+Q==}
@@ -3166,6 +3182,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.memoize@4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
@@ -3639,6 +3656,9 @@ packages:
   pony-cause@2.1.11:
     resolution: {integrity: sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==}
     engines: {node: '>=12.0.0'}
+
+  poseidon-solidity@0.0.5:
+    resolution: {integrity: sha512-NzrvSwHzvZgT4hvg2GyGqeR+UOU/eLSEt4wAoXEua+VaR7NTKKwx1X9bPlh1VMBEVEno+IWvkRBbidFGzTeAqQ==}
 
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
@@ -5910,6 +5930,10 @@ snapshots:
       '@noble/hashes': 1.6.1
       '@scure/base': 1.2.4
 
+  '@semaphore-protocol/contracts@4.9.2':
+    dependencies:
+      '@zk-kit/lean-imt.sol': 2.0.1
+
   '@sentry/core@5.30.0':
     dependencies:
       '@sentry/hub': 5.30.0
@@ -6637,6 +6661,10 @@ snapshots:
     dependencies:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
+
+  '@zk-kit/lean-imt.sol@2.0.1':
+    dependencies:
+      poseidon-solidity: 0.0.5
 
   abbrev@1.0.9: {}
 
@@ -9301,6 +9329,8 @@ snapshots:
   pngjs@5.0.0: {}
 
   pony-cause@2.1.11: {}
+
+  poseidon-solidity@0.0.5: {}
 
   possible-typed-array-names@1.0.0: {}
 

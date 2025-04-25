@@ -26,6 +26,9 @@
     "viem": "^2.22.10"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.2.0"
+    "@openzeppelin/contracts": "^5.2.0",
+    "@semaphore-protocol/contracts": "^4.9.2",
+    "@zk-kit/lean-imt.sol": "^2.0.1",
+    "poseidon-solidity": "^0.0.5"
   }
 }
