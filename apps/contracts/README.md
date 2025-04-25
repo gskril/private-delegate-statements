@@ -1,6 +1,6 @@
 # Contracts
 
-Hardhat project for building smart contracts. The deploy script uses CREATE2 to easily mine a vanity address.
+Smart contract that regulates access to anonymity pools of DAO delegates.
 
 ## Local Development
 

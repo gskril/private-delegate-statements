@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-contract Contract {
+contract DelegatePools {
     /*//////////////////////////////////////////////////////////////
                                 STRUCTS
     //////////////////////////////////////////////////////////////*/
@@ -10,8 +10,9 @@ contract Contract {
                                PARAMETERS
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice The name of the contract.
-    string public name;
+    /// @notice The governance token of the relevant DAO.
+    /// @dev Must implement ERC20Votes.
+    address public immutable token;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -29,8 +30,8 @@ contract Contract {
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory _name) {
-        name = _name;
+    constructor(address _token) {
+        token = _token;
     }
 
     /*//////////////////////////////////////////////////////////////
