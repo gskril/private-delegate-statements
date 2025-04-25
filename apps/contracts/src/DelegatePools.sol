@@ -90,7 +90,7 @@ contract DelegatePools is Ownable {
             revert PoolAlreadyExists(minVotes);
         }
 
-        // Create the pool
+        // Create the underlying Semaphore group
         groupId = semaphore.createGroup();
         pools[minVotes] = groupId;
         emit PoolCreated(minVotes, groupId);
@@ -101,7 +101,7 @@ contract DelegatePools is Ownable {
     //////////////////////////////////////////////////////////////*/
 
     function _joinPool(uint256 minVotes, uint256 identityCommitment) internal {
-        // Check if the group exists
+        // Check if a Semaphore group exists for the given `minVotes`
         if (pools[minVotes] == 0) {
             revert PoolDoesNotExist(minVotes);
         }
@@ -111,7 +111,7 @@ contract DelegatePools is Ownable {
             revert InsufficientVotes(token.getVotes(msg.sender), minVotes);
         }
 
-        // Add the user to the group
+        // Add the user to the Semaphore group
         semaphore.addMember(pools[minVotes], identityCommitment);
         emit PoolJoined(minVotes, msg.sender);
     }
