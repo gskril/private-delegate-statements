@@ -32,10 +32,11 @@ contract DelegatePools is Ownable {
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error InsufficientVotes(uint256 votes, uint256 minVotes);
-    error PoolAlreadyExists(uint256 minVotes);
-    error PoolDoesNotExist(uint256 minVotes);
     error InvalidInputLength();
+    error SemaphoreNotInitialized();
+    error PoolDoesNotExist(uint256 minVotes);
+    error PoolAlreadyExists(uint256 minVotes);
+    error InsufficientVotes(uint256 votes, uint256 minVotes);
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -82,7 +83,7 @@ contract DelegatePools is Ownable {
                             ADMIN FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function createPool(uint256 minVotes) external onlyOwner {
+    function createPool(uint256 minVotes) external onlyOwner returns (uint256) {
         uint256 groupId = pools[minVotes];
 
         // Only allow one pool per `minVotes`
@@ -90,10 +91,17 @@ contract DelegatePools is Ownable {
             revert PoolAlreadyExists(minVotes);
         }
 
+        // Require that the Semaphore instance has been used at least once to avoid edge cases with a group ID of 0
+        if (semaphore.groupCounter() == 0) {
+            revert SemaphoreNotInitialized();
+        }
+
         // Create the underlying Semaphore group
-        groupId = semaphore.createGroup();
+        groupId = semaphore.createGroup(address(this));
         pools[minVotes] = groupId;
         emit PoolCreated(minVotes, groupId);
+
+        return groupId;
     }
 
     /*//////////////////////////////////////////////////////////////

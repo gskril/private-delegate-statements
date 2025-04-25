@@ -13,8 +13,8 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: 'https://ethereum-rpc.publicnode.com',
-        blockNumber: 22348000,
+        url:
+          process.env.MAINNET_RPC_URL ?? 'https://ethereum-rpc.publicnode.com',
       },
     },
     localhost: {
