@@ -4,7 +4,7 @@ import { Identity } from '@semaphore-protocol/identity'
 import { generateProof } from '@semaphore-protocol/proof'
 import { expect } from 'chai'
 import hre from 'hardhat'
-import { zeroAddress } from 'viem'
+import { formatEther, zeroAddress } from 'viem'
 import { parseEther } from 'viem/utils'
 
 const user = '0xb8c2C29ee19D8307cb7255e1Cd9CbDE883A267d5' // nick.eth
@@ -102,6 +102,11 @@ describe('Tests', function () {
     const identity = new Identity()
     const minVotes = parseEther('1000')
     await contract.write.createPool([minVotes])
+
+    const votes = await contract.read.getVotes([user])
+    expect(Number(formatEther(votes))).to.be.greaterThan(
+      Number(formatEther(minVotes))
+    )
 
     // Should succeed because `user` has more than 1000 votes
     // await contract.write.joinPool([minVotes, identity.commitment], {

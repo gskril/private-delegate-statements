@@ -79,6 +79,10 @@ contract DelegatePools is Ownable {
         return semaphore.verifyProof(groupId, proof);
     }
 
+    function getVotes(address account) external view returns (uint256) {
+        return token.getVotes(account);
+    }
+
     /*//////////////////////////////////////////////////////////////
                             ADMIN FUNCTIONS
     //////////////////////////////////////////////////////////////*/
