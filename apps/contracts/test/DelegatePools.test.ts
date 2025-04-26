@@ -166,4 +166,19 @@ describe('Tests', function () {
       expect((error as Error).message).to.include('does not exist in this tree')
     }
   })
+
+  it('should let a user join multiple pools', async function () {
+    const { contract } = await loadFixture(deploy)
+
+    const identity = new Identity()
+    const minVotes = [parseEther('1000'), parseEther('2000')]
+
+    for (const minVote of minVotes) {
+      await contract.write.createPool([minVote])
+    }
+
+    await contract.write.joinPools([minVotes, identity.commitment], {
+      account: account2,
+    })
+  })
 })

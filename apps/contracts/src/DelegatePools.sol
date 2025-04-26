@@ -32,7 +32,6 @@ contract DelegatePools is Ownable {
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error InvalidInputLength();
     error SemaphoreNotInitialized();
     error PoolDoesNotExist(uint256 minVotes);
     error PoolAlreadyExists(uint256 minVotes);
@@ -61,14 +60,10 @@ contract DelegatePools is Ownable {
 
     function joinPools(
         uint256[] calldata minVotes,
-        uint256[] calldata identityCommitments
+        uint256 identityCommitment
     ) external {
-        if (minVotes.length != identityCommitments.length) {
-            revert InvalidInputLength();
-        }
-
         for (uint256 i = 0; i < minVotes.length; i++) {
-            _joinPool(minVotes[i], identityCommitments[i]);
+            _joinPool(minVotes[i], identityCommitment);
         }
     }
 
