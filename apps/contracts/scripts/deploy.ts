@@ -24,11 +24,10 @@ async function main() {
     encodedArgs
   )
   console.log({ initCodeHash })
-  process.exit(0)
 
   const { address } = await create2Deploy({
     initCode,
-    salt: '0x',
+    salt: '0x3536987beb258fa15ef64b4c02e36e9e3264f568a633d2be0261ff5c551369eb',
   })
 
   console.log(`Deployed ${contractName} to ${address}`)
