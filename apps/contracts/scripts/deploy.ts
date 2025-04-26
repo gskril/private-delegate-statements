@@ -1,26 +1,34 @@
+// npx hardhat run scripts/deploy.ts --network mainnet
 import hre from 'hardhat'
 import { encodeAbiParameters } from 'viem/utils'
 
-import { generateSaltAndDeploy } from './lib/create2'
+import { create2Deploy } from './lib/create2'
+import { getInitCode } from './lib/initcode'
 
 async function main() {
-  const contractName = 'Contract'
+  const contractName = 'DelegatePools'
 
   const constructorArguments = [
-    'Contract', // _name
+    '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72', // _token ($ENS)
+    '0x8764f2939aE6ed4EcB5baD2cdB7e2B81aA153bd1', // _owner (ens.gregskril.eth)
+    '0x4ca12bd748f8567c92ed65ea46b8913d038f99f2', // _semaphore
   ] as const
 
   const encodedArgs = encodeAbiParameters(
-    [{ type: 'string' }],
+    [{ type: 'address' }, { type: 'address' }, { type: 'address' }],
     constructorArguments
   )
 
-  const { address } = await generateSaltAndDeploy({
-    vanity: '0x000',
-    encodedArgs,
+  const { initCode, initCodeHash } = await getInitCode(
     contractName,
-    caseSensitive: false,
-    startingIteration: 0,
+    encodedArgs
+  )
+  console.log({ initCodeHash })
+  process.exit(0)
+
+  const { address } = await create2Deploy({
+    initCode,
+    salt: '0x',
   })
 
   console.log(`Deployed ${contractName} to ${address}`)

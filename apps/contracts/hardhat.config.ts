@@ -14,8 +14,14 @@ const config: HardhatUserConfig = {
     localhost: {
       accounts: [DEPLOYER_KEY],
     },
+    sepolia: {
+      url:
+        process.env.SEPOLIA_RPC_URL ??
+        'https://ethereum-sepolia-rpc.publicnode.com',
+      accounts: [DEPLOYER_KEY],
+    },
     mainnet: {
-      url: 'https://ethereum-rpc.publicnode.com',
+      url: process.env.MAINNET_RPC_URL ?? 'https://ethereum-rpc.publicnode.com',
       accounts: [DEPLOYER_KEY],
     },
   },

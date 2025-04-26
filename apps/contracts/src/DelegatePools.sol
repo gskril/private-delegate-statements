@@ -32,6 +32,7 @@ contract DelegatePools is Ownable {
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
 
+    error InvalidAddress();
     error SemaphoreNotInitialized();
     error PoolDoesNotExist(uint256 minVotes);
     error PoolAlreadyExists(uint256 minVotes);
@@ -46,6 +47,10 @@ contract DelegatePools is Ownable {
         address _owner,
         address _semaphore
     ) Ownable(_owner) {
+        if (_token == address(0) || _semaphore == address(0)) {
+            revert InvalidAddress();
+        }
+
         token = ERC20Votes(_token);
         semaphore = Semaphore(_semaphore);
     }

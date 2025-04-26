@@ -2,13 +2,9 @@
   "name": "contracts",
   "private": true,
   "scripts": {
-    "dev": "hardhat node",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "prettier": "prettier --write .",
-    "deploy:base": "hardhat run scripts/deploy.ts --network base",
-    "deploy:baseSepolia": "hardhat run scripts/deploy.ts --network baseSepolia",
-    "deploy:local": "hardhat run scripts/deploy.ts --network localhost"
+    "prettier": "prettier --write ."
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.0.12",

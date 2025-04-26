@@ -2,6 +2,13 @@
 
 Smart contract that regulates access to anonymity pools of DAO delegates.
 
+## Deployments
+
+| Contract          | Address                                    |
+| ----------------- | ------------------------------------------ |
+| Semaphore.sol     | 0x4ca12bd748f8567c92ed65ea46b8913d038f99f2 |
+| DelegatePools.sol |                                            |
+
 ## Local Development
 
 From the parent monorepo directory, install dependencies.
