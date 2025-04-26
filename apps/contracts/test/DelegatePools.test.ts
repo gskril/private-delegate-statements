@@ -4,8 +4,10 @@ import { Identity } from '@semaphore-protocol/identity'
 import { generateProof } from '@semaphore-protocol/proof'
 import { expect } from 'chai'
 import hre from 'hardhat'
-import { formatEther, zeroAddress } from 'viem'
+import { formatEther, keccak256, toHex, zeroAddress } from 'viem'
 import { parseEther } from 'viem/utils'
+
+import { formatProof } from './utils'
 
 const account0 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' // deployer, owner, 0 votes
 const account1 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // user with 0 votes
@@ -54,7 +56,7 @@ const deploy = async () => {
     semaphore.address, // _semaphore
   ])
 
-  return { contract }
+  return { contract, semaphore }
 }
 
 describe('Tests', function () {
@@ -104,11 +106,12 @@ describe('Tests', function () {
   })
 
   it('should let a user join a pool and verify a message from them', async function () {
-    const { contract } = await loadFixture(deploy)
+    const { contract, semaphore } = await loadFixture(deploy)
 
     const identity = new Identity()
     const minVotes = parseEther('1000')
     await contract.write.createPool([minVotes])
+    const groupId = await contract.read.pools([minVotes])
 
     const votes = await contract.read.getVotes([account2])
     expect(Number(formatEther(votes))).to.be.greaterThan(
@@ -129,11 +132,38 @@ describe('Tests', function () {
       account: account2,
     })
 
-    // Create the group offline, let the user make a statement, and then verify that it came from a member of the group
-    // const group = new Group([identity.commitment])
-    // const proof = await generateProof(identity, group, message, scope)
+    // Create the group offline, generate a proof with a statement
+    const group = new Group([identity.commitment])
+    const scope = await semaphore.read.getMerkleTreeRoot([groupId])
+    const proof = await generateProof(
+      identity,
+      group,
+      keccak256(
+        toHex(
+          'This is a hot take about the DAO from a large delegate, without revealing which delegate'
+        )
+      ),
+      scope
+    )
 
-    // const verified = await contract.read.verifyMessage(1, proof)
-    // expect(verified).to.equal(true)
+    // Verify that the statement came from a member of the group
+    const verified = await contract.read.verifyMessage([
+      groupId,
+      formatProof(proof),
+    ])
+    expect(verified).to.equal(true)
+
+    // Try to generate a proof for a statement from a non-member, which should fail
+    try {
+      await generateProof(
+        new Identity(),
+        group,
+        keccak256(toHex('Some statement from a non-member')),
+        scope
+      )
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+      expect((error as Error).message).to.include('does not exist in this tree')
+    }
   })
 })
