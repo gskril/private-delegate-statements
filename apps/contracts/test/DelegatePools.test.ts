@@ -7,8 +7,9 @@ import hre from 'hardhat'
 import { formatEther, zeroAddress } from 'viem'
 import { parseEther } from 'viem/utils'
 
-const user = '0xb8c2C29ee19D8307cb7255e1Cd9CbDE883A267d5' // nick.eth
-const nonOwner = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+const account0 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' // deployer, owner, 0 votes
+const account1 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // user with 0 votes
+const account2 = '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' // user with 65k votes
 
 async function deploySemaphore() {
   const verifier = await hre.viem.deployContract(
@@ -38,12 +39,18 @@ async function deploySemaphore() {
 }
 
 const deploy = async () => {
-  const walletClients = await hre.viem.getWalletClients()
   const { semaphore } = await loadFixture(deploySemaphore)
 
+  const mockToken = await hre.viem.deployContract(
+    'src/mocks/MockERC20.sol:MockERC20'
+  )
+
+  await mockToken.write.mint([account0, parseEther('65000')])
+  await mockToken.write.delegate([account2])
+
   const contract = await hre.viem.deployContract('DelegatePools', [
-    '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72', // _token ($ENS)
-    walletClients[0].account.address, // _owner (deployer)
+    mockToken.address, // _token
+    account0, // _owner
     semaphore.address, // _semaphore
   ])
 
@@ -66,11 +73,11 @@ describe('Tests', function () {
     expect(await semaphore.read.groupCounter()).to.equal(2n)
   })
 
-  it('should return the token address', async function () {
+  it('should return a token address', async function () {
     const { contract } = await loadFixture(deploy)
 
     const token = await contract.read.token()
-    expect(token).to.equal('0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72')
+    expect(token).to.not.equal(zeroAddress)
   })
 
   it('should create a pool', async function () {
@@ -83,10 +90,10 @@ describe('Tests', function () {
 
     // Should not let a non-owner create a pool
     const unauthedCall = contract.write.createPool([minVotes], {
-      account: nonOwner,
+      account: account1,
     })
     await expect(unauthedCall).to.be.rejectedWith(
-      `OwnableUnauthorizedAccount("${nonOwner}")`
+      `OwnableUnauthorizedAccount("${account1}")`
     )
 
     // Should let the owner create a pool
@@ -103,15 +110,24 @@ describe('Tests', function () {
     const minVotes = parseEther('1000')
     await contract.write.createPool([minVotes])
 
-    const votes = await contract.read.getVotes([user])
+    const votes = await contract.read.getVotes([account2])
     expect(Number(formatEther(votes))).to.be.greaterThan(
       Number(formatEther(minVotes))
     )
 
-    // Should succeed because `user` has more than 1000 votes
-    // await contract.write.joinPool([minVotes, identity.commitment], {
-    //   account: user,
-    // })
+    // Should fail because `account2` has less than 1000 votes
+    const unauthedCall = contract.write.joinPool([
+      minVotes,
+      identity.commitment,
+    ])
+    await expect(unauthedCall).to.be.rejectedWith(
+      `InsufficientVotes(0, ${minVotes})`
+    )
+
+    // Should succeed because `account2` has more than 1000 votes
+    await contract.write.joinPool([minVotes, identity.commitment], {
+      account: account2,
+    })
 
     // Create the group offline, let the user make a statement, and then verify that it came from a member of the group
     // const group = new Group([identity.commitment])
