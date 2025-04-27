@@ -1,7 +1,7 @@
 import { ChevronRight, Lock } from 'lucide-react'
 import Link from 'next/link'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export default function HeroSection() {
@@ -37,30 +37,28 @@ export default function HeroSection() {
           View Statements
         </Link>
       </div>
-      <div className="relative h-[400px] w-full max-w-4xl overflow-hidden rounded-xl bg-gradient-to-br from-emerald-900/30 to-teal-900/30">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex h-3/4 w-3/4 flex-col rounded-lg bg-black/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center gap-2">
+      <div className="w-full max-w-4xl rounded-xl bg-gradient-to-br from-emerald-900/30 to-teal-900/30 p-6 sm:p-12">
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col gap-4 rounded-lg bg-black/50 p-6 backdrop-blur-sm">
+            <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
               <span className="font-mono text-sm text-emerald-500">
                 Pool: 10k Voting Power
               </span>
             </div>
-            <div className="mb-4 rounded bg-gray-900 p-4 text-left">
+            <div className="rounded bg-gray-900 p-4 text-left">
               <p className="font-mono text-gray-300">
                 "I believe we should allocate more resources to research before
                 voting on Proposal #42. The current approach lacks sufficient
                 data to make an informed decision."
               </p>
             </div>
-            <div className="mt-auto flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500"></div>
-                <span className="text-sm text-gray-400">
-                  Verified via Semaphore
-                </span>
+                <span className="text-sm text-gray-400">ZK Verified</span>
               </div>
-              <span className="text-sm text-gray-400">Posted 2 hours ago</span>
+              {/* <span className="text-sm text-gray-400">Posted 2 hours ago</span> */}
             </div>
           </div>
         </div>

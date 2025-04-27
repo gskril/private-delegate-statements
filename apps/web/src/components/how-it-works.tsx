@@ -22,8 +22,7 @@ export default function HowItWorks() {
           </div>
           <h3 className="mb-3 text-xl font-bold">Join Anonymity Pool</h3>
           <p className="text-gray-300">
-            Delegates join onchain pools based on their voting power (1k, 10k,
-            or 50k).
+            Delegates join onchain pools based on their voting power.
           </p>
         </div>
 
@@ -38,8 +37,8 @@ export default function HowItWorks() {
           </div>
           <h3 className="mb-3 text-xl font-bold">Make Private Statement</h3>
           <p className="text-gray-300">
-            Create a statement that will be associated with your pool, not your
-            specific identity.
+            Create a statement that will be associated with your pool, but not
+            your specific identity.
           </p>
         </div>
 
@@ -55,7 +54,7 @@ export default function HowItWorks() {
           <h3 className="mb-3 text-xl font-bold">ZK Verification</h3>
           <p className="text-gray-300">
             Viewers verify the statement came from a legitimate delegate in the
-            pool using Semaphore ZK proofs.
+            pool using ZK proofs.
           </p>
         </div>
       </div>
@@ -86,18 +85,13 @@ export default function HowItWorks() {
           </div>
           <div>
             <h4 className="mb-3 text-lg font-semibold text-emerald-400">
-              On-chain Verification
+              Trustless Verification
             </h4>
             <p className="mb-4 text-gray-300">
-              All pool memberships are verified on-chain, ensuring that only
+              All pool memberships are verified onchain, ensuring that only
               legitimate delegates with the required voting power can join
               specific pools.
             </p>
-            <div className="overflow-x-auto rounded bg-gray-800 p-3 font-mono text-xs">
-              <code className="text-emerald-300">
-                {`// Example verification\nfunction verifyMembership(bytes memory proof) public view returns (bool) {\n  return semaphore.verifyProof(poolId, proof);\n}`}
-              </code>
-            </div>
           </div>
         </div>
       </div>
