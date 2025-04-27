@@ -48,9 +48,9 @@ export default function HeroSection() {
             </div>
             <div className="rounded bg-gray-900 p-4 text-left">
               <p className="font-mono text-gray-300">
-                "I believe we should allocate more resources to research before
-                voting on Proposal #42. The current approach lacks sufficient
-                data to make an informed decision."
+                &quot;I believe we should allocate more resources to research
+                before voting on Proposal #42. The current approach lacks
+                sufficient data to make an informed decision.&quot;
               </p>
             </div>
             <div className="flex items-center justify-between">

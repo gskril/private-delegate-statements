@@ -69,8 +69,6 @@ export default function StatementForm() {
           <Button
             type="submit"
             className="bg-emerald-500 text-black hover:bg-emerald-600"
-            disable
-            className="bg-emerald-500 text-black hover:bg-emerald-600"
             disabled={isSubmitting || statement.trim().length < 10}
           >
             {isSubmitting ? 'Generating ZK Proof...' : 'Publish Statement'}

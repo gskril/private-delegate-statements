@@ -118,7 +118,7 @@ export default function Verification() {
                       <p className="text-sm text-gray-300">
                         The provided proof could not be verified. This may be
                         due to an invalid format, tampered data, or a proof that
-                        doesn't correspond to any known anonymity pool.
+                        doesn&apos;t correspond to any known anonymity pool.
                       </p>
                     </div>
                   </div>
@@ -196,13 +196,13 @@ export default function Verification() {
                     which member)
                   </li>
                   <li>They have the authority to make the statement</li>
-                  <li>The statement hasn't been tampered with</li>
+                  <li>The statement hasn&apos;t been tampered with</li>
                 </ul>
               </li>
               <li>
                 <span className="font-medium text-white">Verification:</span>{' '}
-                Anyone can verify the proof against the pool's Merkle root to
-                confirm the statement's authenticity.
+                Anyone can verify the proof against the pool&apos;s Merkle root
+                to confirm the statement&apos;s authenticity.
               </li>
             </ol>
 
