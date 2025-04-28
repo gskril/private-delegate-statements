@@ -169,7 +169,7 @@ describe('Tests', function () {
     )
 
     // Verify that the statement came from a member of the group
-    const verified = await contract.read.verifyMessage([
+    const verified = await contract.read.verifyStatement([
       minVotes,
       statement,
       encodedProof,
@@ -177,7 +177,7 @@ describe('Tests', function () {
     expect(verified).to.equal(true)
 
     // Verify that the proof is for a specific statement
-    const notVerified = await contract.read.verifyMessage([
+    const notVerified = await contract.read.verifyStatement([
       minVotes,
       'proof is for a different statement',
       encodedProof,
