@@ -2,7 +2,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { type Address } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-import { delegatePoolsEventsAbi } from '@/lib/abi'
+import { delegatePoolsAddress, delegatePoolsEventsAbi } from '@/lib/abi'
 
 interface Pool {
   members: Address[]
@@ -28,7 +28,7 @@ export function usePools(address?: Address) {
       }
 
       const filter = await client.createEventFilter({
-        address: '0x0000000000D4BB6B814f94dE0a9d7b1c14864065',
+        address: delegatePoolsAddress,
         events: delegatePoolsEventsAbi,
         fromBlock: 22355096n,
       })

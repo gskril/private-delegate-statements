@@ -6,6 +6,7 @@ import { formatEther } from 'viem/utils'
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 
 import DashboardNav from '@/components/dashboard-nav'
+import { JoinPoolsDialog } from '@/components/join-pools-dialog'
 import PoolSelector from '@/components/pool-selector'
 import StatementFeed from '@/components/statement-feed'
 import StatementForm from '@/components/statement-form'
@@ -38,8 +39,8 @@ export default function Dashboard() {
       <DashboardNav />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col gap-8 md:flex-row">
-          <div className="w-full md:w-1/4">
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <div className="w-full lg:w-1/4">
             <Card className="border-gray-700 bg-gray-800/50">
               <CardHeader>
                 <CardTitle>Your Profile</CardTitle>
@@ -102,7 +103,7 @@ export default function Dashboard() {
 
                           <Button
                             variant="outline"
-                            className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500/10"
+                            className="w-full"
                             onClick={() => disconnect()}
                           >
                             Disconnect
@@ -113,10 +114,7 @@ export default function Dashboard() {
                   }
 
                   return (
-                    <Button
-                      className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-                      onClick={openConnectModal}
-                    >
+                    <Button className="w-full" onClick={openConnectModal}>
                       Connect
                     </Button>
                   )
@@ -144,20 +142,12 @@ export default function Dashboard() {
                   </div>
                 ))}
 
-                <Button
-                  disabled={!hasUnjoinedPools}
-                  className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
-                  onClick={openConnectModal}
-                >
-                  {hasUnjoinedPools
-                    ? 'Join Available Pools'
-                    : 'Already in All Pools'}
-                </Button>
+                <JoinPoolsDialog disabled={!hasUnjoinedPools} />
               </CardContent>
             </Card>
           </div>
 
-          <div className="w-full md:w-3/4">
+          <div className="w-full lg:w-3/4">
             <Tabs defaultValue="make-statement" className="w-full">
               <TabsList className="mb-8 grid grid-cols-2">
                 <TabsTrigger
