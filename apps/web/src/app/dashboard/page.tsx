@@ -1,6 +1,6 @@
 'use client'
 
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Eye, MessageSquare, Shield } from 'lucide-react'
 import { formatEther } from 'viem/utils'
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
@@ -30,6 +30,8 @@ export default function Dashboard() {
   const { disconnect } = useDisconnect()
   const { openConnectModal } = useConnectModal()
   const { data: pools } = usePools(address)
+
+  const hasUnjoinedPools = pools?.some((pool) => !pool.joined)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -126,20 +128,31 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>Available Pools</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {pools?.map((pool) => (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                        <span>{formatMinVotes(pool.minVotes!)} Pool</span>
-                      </div>
-                      <span className="text-gray-400">
-                        {pool.members.length} members
-                      </span>
+              <CardContent className="space-y-4">
+                {pools?.map((pool) => (
+                  <div
+                    key={pool.groupId}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                      <span>{formatMinVotes(pool.minVotes!)} Pool</span>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-gray-400">
+                      {pool.members.length} members
+                    </span>
+                  </div>
+                ))}
+
+                <Button
+                  disabled={!hasUnjoinedPools}
+                  className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                  onClick={openConnectModal}
+                >
+                  {hasUnjoinedPools
+                    ? 'Join Available Pools'
+                    : 'Already in All Pools'}
+                </Button>
               </CardContent>
             </Card>
           </div>
