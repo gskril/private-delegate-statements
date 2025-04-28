@@ -2,6 +2,7 @@
 
 import { CheckCircle, Search, XCircle } from 'lucide-react'
 import { useState } from 'react'
+import { encodeAbiParameters } from 'viem/utils'
 
 import DashboardNav from '@/components/dashboard-nav'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -15,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getStatement } from '@/hooks/useStatements'
+import { delegatePoolsAddress } from '@/lib/abi'
 import { Statement } from '@/lib/types'
 import { getStatementHash } from '@/lib/utils'
 
@@ -150,6 +152,52 @@ export default function Verification() {
 
                         <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
                           {JSON.stringify(statement.proof, null, 2)}
+                        </pre>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="text-lg font-medium">
+                          Onchain Verification
+                        </h3>
+
+                        <CardDescription className="mb-3">
+                          Pass the following data to{' '}
+                          <a
+                            href={`https://etherscan.io/address/${delegatePoolsAddress}#readContract#F6`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-500 hover:text-emerald-400"
+                          >
+                            <code className="font-mono">verifyStatement()</code>{' '}
+                          </a>
+                          on the smart contract to verify the message.
+                        </CardDescription>
+
+                        <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+                          {JSON.stringify(
+                            {
+                              minVotes: statement.minVotes,
+                              statement: statement.statement,
+                              proof: encodeAbiParameters(
+                                [
+                                  { name: 'merkleTreeDepth', type: 'uint256' },
+                                  { name: 'merkleTreeRoot', type: 'uint256' },
+                                  { name: 'nullifier', type: 'uint256' },
+                                  { name: 'scope', type: 'uint256' },
+                                  { name: 'points', type: 'uint256[8]' },
+                                ],
+                                [
+                                  BigInt(statement.proof.merkleTreeDepth),
+                                  BigInt(statement.proof.merkleTreeRoot),
+                                  BigInt(statement.proof.nullifier),
+                                  statement.proof.scope,
+                                  statement.proof.points,
+                                ]
+                              ),
+                            },
+                            null,
+                            2
+                          )}
                         </pre>
                       </div>
                     </div>
