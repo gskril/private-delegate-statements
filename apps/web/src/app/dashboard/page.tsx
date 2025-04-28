@@ -9,6 +9,7 @@ import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 
 import DashboardNav from '@/components/dashboard-nav'
 import { JoinPoolsDialog } from '@/components/join-pools-dialog'
+import { MembersDialog } from '@/components/members-dialog'
 import StatementFeed from '@/components/statement-feed'
 import StatementForm from '@/components/statement-form'
 import { Button } from '@/components/ui/button'
@@ -160,9 +161,7 @@ function DashboardContent() {
                       <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
                       <span>{formatMinVotes(pool.minVotes!)} Pool</span>
                     </div>
-                    <span className="text-gray-400">
-                      {pool.members.length} members
-                    </span>
+                    <MembersDialog pool={pool} />
                   </div>
                 ))}
 
