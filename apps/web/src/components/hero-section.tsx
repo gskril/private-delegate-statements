@@ -1,10 +1,15 @@
+'use client'
+
 import { ChevronRight, Lock } from 'lucide-react'
 import Link from 'next/link'
 
 import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { useStatements } from '@/hooks/useStatements'
+import { cn, formatMinVotes } from '@/lib/utils'
 
 export default function HeroSection() {
+  const statements = useStatements()
+
   return (
     <section className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:py-32">
       <div className="mb-6 inline-block rounded-full bg-emerald-500/20 p-3">
@@ -27,30 +32,31 @@ export default function HeroSection() {
         >
           Join a Pool <ChevronRight className="ml-2 h-5 w-5" />
         </Link>
-        {/* <Link
-          href="/verification"
+        <Link
+          href="/dashboard?tab=view"
           className={cn(
             buttonVariants({ variant: 'outline' }),
             'h-auto border-emerald-500 px-8 py-6 text-lg text-emerald-500 hover:bg-emerald-500/10'
           )}
         >
           View Statements
-        </Link> */}
+        </Link>
       </div>
+
       <div className="w-full max-w-4xl rounded-xl bg-gradient-to-br from-emerald-900/30 to-teal-900/30 p-6 sm:p-12">
         <div className="flex items-center justify-center">
-          <div className="flex flex-col gap-4 rounded-lg bg-black/50 p-6 backdrop-blur-sm">
+          <div className="flex min-w-full flex-col gap-4 rounded-lg bg-black/50 p-6 backdrop-blur-sm">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
               <span className="font-mono text-sm text-emerald-500">
-                Pool: 10k Voting Power
+                Pool:{' '}
+                {statements.data?.[0].minVotes &&
+                  `${formatMinVotes(BigInt(statements.data[0].minVotes))} Voting Power`}
               </span>
             </div>
             <div className="rounded bg-gray-900 p-4 text-left">
               <p className="font-mono text-gray-300">
-                &quot;I believe we should allocate more resources to research
-                before voting on Proposal #42. The current approach lacks
-                sufficient data to make an informed decision.&quot;
+                {statements.data?.[0].statement ?? '...'}
               </p>
             </div>
             <div className="flex items-center justify-between">

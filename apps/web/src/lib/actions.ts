@@ -2,8 +2,9 @@
 
 import { type SemaphoreProof } from '@semaphore-protocol/proof'
 
-import { getStatementHash, redis } from './redis'
+import { redis } from './redis'
 import { type RedisStatement } from './types'
+import { getStatementHash } from './utils'
 
 export async function saveStatement({
   groupSize,

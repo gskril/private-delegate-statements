@@ -1,20 +1,12 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { CheckCircle, Loader2 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { RedisStatement } from '@/lib/types'
+import { useStatements } from '@/hooks/useStatements'
 import { formatMinVotes } from '@/lib/utils'
 
 export default function StatementFeed() {
-  const statements = useQuery({
-    queryKey: ['statements'],
-    queryFn: async () => {
-      const response = await fetch('/api/statements')
-      return response.json() as Promise<(RedisStatement & { id: string })[]>
-    },
-  })
+  const statements = useStatements()
 
   if (statements.data?.length === 0) {
     return <div>No statements found</div>

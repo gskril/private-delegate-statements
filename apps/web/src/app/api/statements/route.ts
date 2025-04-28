@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+import { toHex } from 'viem/utils'
 
-import { getStatementHash, redis } from '@/lib/redis'
+import { redis } from '@/lib/redis'
 import { RedisStatement } from '@/lib/types'
 
 export async function GET() {
@@ -16,7 +17,7 @@ export async function GET() {
   const statementsWithIds = values
     .map((v) => ({
       ...v,
-      id: getStatementHash(v.statement),
+      id: toHex(v.proof.message),
     }))
     .sort((a, b) => b.timestamp - a.timestamp)
 

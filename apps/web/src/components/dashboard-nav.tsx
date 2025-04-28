@@ -11,10 +11,10 @@ const navItems = [
     label: 'Dashboard',
     href: '/dashboard',
   },
-  // {
-  //   label: 'Verification',
-  //   href: '/verification',
-  // },
+  {
+    label: 'Verification',
+    href: '/verification',
+  },
 ]
 
 export default function DashboardNav() {

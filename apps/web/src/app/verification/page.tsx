@@ -1,7 +1,10 @@
+'use client'
+
 import { CheckCircle, Search, XCircle } from 'lucide-react'
+import { useState } from 'react'
 
 import DashboardNav from '@/components/dashboard-nav'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -11,8 +14,34 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getStatement } from '@/hooks/useStatements'
+import { Statement } from '@/lib/types'
+import { getStatementHash } from '@/lib/utils'
 
 export default function Verification() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [statement, setStatement] = useState<Statement | null>()
+
+  const handleVerifyStatement = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    const formData = new FormData(e.target as HTMLFormElement)
+    const message = formData.get('statement') as string
+
+    try {
+      const statement = await getStatement(getStatementHash(message))
+      setStatement(statement)
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert('An unknown error occurred')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <DashboardNav />
@@ -28,18 +57,18 @@ export default function Verification() {
           <CardHeader>
             <CardTitle>Verify Statement</CardTitle>
             <CardDescription>
-              Enter a statement ID or paste the ZK proof to verify its
-              authenticity.
+              Every statement on this website is already verified, but you can
+              double check by using the tools below.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="id" className="w-full">
-              <TabsList className="mb-6 grid grid-cols-2">
+            <Tabs defaultValue="statement" className="w-full">
+              {/* <TabsList className="mb-6 grid grid-cols-2">
                 <TabsTrigger
-                  value="id"
+                  value="statement"
                   className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black"
                 >
-                  Verify by ID
+                  Verify by Statement
                 </TabsTrigger>
                 <TabsTrigger
                   value="proof"
@@ -47,22 +76,28 @@ export default function Verification() {
                 >
                   Verify by Proof
                 </TabsTrigger>
-              </TabsList>
+              </TabsList> */}
 
-              <TabsContent value="id">
+              <TabsContent value="statement">
                 <div className="space-y-4">
-                  <div className="flex gap-2">
+                  <form onSubmit={handleVerifyStatement} className="flex gap-2">
                     <Input
-                      placeholder="Enter statement ID"
+                      name="statement"
+                      placeholder="Paste statement"
                       className="border-gray-700 bg-gray-900"
                     />
-                    <Button className="bg-emerald-500 text-black hover:bg-emerald-600">
-                      <Search className="mr-2 h-4 w-4" />
-                      Verify
+                    <Button
+                      type="submit"
+                      loading={isSubmitting}
+                      disabled={isSubmitting}
+                      className="bg-emerald-500 text-black hover:bg-emerald-600"
+                    >
+                      <Search className="h-4 w-4" />
+                      Fetch proof
                     </Button>
-                  </div>
+                  </form>
 
-                  <div className="flex items-start gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
+                  {/* <div className="flex items-start gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
                     <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
                     <div>
                       <p className="mb-2 font-medium text-emerald-300">
@@ -75,30 +110,50 @@ export default function Verification() {
                         identity.
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
-                    <div className="mb-3 flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                      <span className="font-mono text-sm text-emerald-500">
-                        10k Pool
-                      </span>
-                      <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
-                        <CheckCircle className="h-3 w-3 text-emerald-500" />
-                        <span>Verified</span>
+                  {statement === null && !isSubmitting && (
+                    <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
+                      <p className="text-gray-400">
+                        No statement found. Please try again.
+                      </p>
+                    </div>
+                  )}
+
+                  {statement && !isSubmitting && (
+                    <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                        <span className="font-mono text-sm text-emerald-500">
+                          10k Pool
+                        </span>
+                        <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
+                          <CheckCircle className="h-3 w-3 text-emerald-500" />
+                          <span>Verified</span>
+                        </div>
+                      </div>
+
+                      <p className="mb-4 text-gray-200">
+                        I believe we should allocate more resources to research
+                        before voting on Proposal #42. The current approach
+                        lacks sufficient data to make an informed decision.
+                      </p>
+
+                      <div className="text-sm text-gray-400">
+                        <span>Posted 2 hours ago</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="mb-3 text-lg font-medium">
+                          Semaphore Proof
+                        </h3>
+
+                        <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+                          {JSON.stringify(statement.proof, null, 2)}
+                        </pre>
                       </div>
                     </div>
-
-                    <p className="mb-4 text-gray-200">
-                      I believe we should allocate more resources to research
-                      before voting on Proposal #42. The current approach lacks
-                      sufficient data to make an informed decision.
-                    </p>
-
-                    <div className="text-sm text-gray-400">
-                      <span>Posted 2 hours ago</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </TabsContent>
 
@@ -207,12 +262,14 @@ export default function Verification() {
             </ol>
 
             <div className="mt-6">
-              <Button
-                variant="outline"
-                className="border-emerald-500 text-emerald-500 hover:bg-emerald-500/10"
+              <a
+                href="https://semaphore.pse.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ variant: 'outline' })}
               >
                 Learn More About Semaphore
-              </Button>
+              </a>
             </div>
           </div>
         </div>
