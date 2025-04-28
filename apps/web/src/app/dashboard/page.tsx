@@ -30,12 +30,12 @@ export default function Dashboard() {
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
   const { openConnectModal } = useConnectModal()
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [tab, setTab] = useState<Tab>(
-    (searchParams.get('tab') as Tab) || 'create'
-  )
+  // const router = useRouter()
+  // const pathname = usePathname()
+  // const searchParams = useSearchParams()
+  // const [tab, setTab] = useState<Tab>(
+  //   (searchParams.get('tab') as Tab) || 'create'
+  // )
 
   const { data: ensName } = useEnsName({ address })
   const { data: ensAvatar } = useEnsAvatar({ name: ensName || undefined })
@@ -165,13 +165,13 @@ export default function Dashboard() {
 
           <div className="w-full lg:w-3/4">
             <Tabs
-              defaultValue={tab}
-              onValueChange={(value) => {
-                setTab(value as Tab)
-                const newSearchParams = new URLSearchParams(searchParams)
-                newSearchParams.set('tab', value)
-                router.push(`${pathname}?${newSearchParams.toString()}`)
-              }}
+              defaultValue={'create'}
+              // onValueChange={(value) => {
+              //   setTab(value as Tab)
+              //   const newSearchParams = new URLSearchParams(searchParams)
+              //   newSearchParams.set('tab', value)
+              //   router.push(`${pathname}?${newSearchParams.toString()}`)
+              // }}
               className="w-full"
             >
               <TabsList className="mb-8 grid grid-cols-2">
