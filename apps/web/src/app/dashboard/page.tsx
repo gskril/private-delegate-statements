@@ -31,7 +31,9 @@ export default function Dashboard() {
   const { openConnectModal } = useConnectModal()
   const pools = usePools(address)
 
-  const hasUnjoinedPools = pools.data?.some((pool) => !pool.joined)
+  const hasUnjoinedPools = pools.data?.some(
+    (pool) => !pool.joined && (votingPower || 0n) > pool.minVotes
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">

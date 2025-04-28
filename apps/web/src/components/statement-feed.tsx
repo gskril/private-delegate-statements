@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle } from 'lucide-react'
+import { CheckCircle, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { RedisStatement } from '@/lib/types'
@@ -23,6 +23,8 @@ export default function StatementFeed() {
   return (
     <div>
       <div className="space-y-6">
+        {statements.isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+
         {statements.data?.map((statement) => (
           <div
             key={statement.id}

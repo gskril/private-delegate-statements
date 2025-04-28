@@ -91,7 +91,7 @@ export default function StatementForm() {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Cannot publish statements</AlertTitle>
         <AlertDescription>
-          You are not in any anonymity pools. Please join a pool to publish.
+          You are not in any anonymity pools. Please join one to publish.
         </AlertDescription>
       </Alert>
     )
