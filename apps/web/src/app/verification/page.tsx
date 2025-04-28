@@ -1,7 +1,8 @@
 'use client'
 
 import { CheckCircle, Search, XCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { encodeAbiParameters } from 'viem/utils'
 
 import DashboardNav from '@/components/dashboard-nav'
@@ -21,28 +22,15 @@ import { Statement } from '@/lib/types'
 import { getStatementHash } from '@/lib/utils'
 
 export default function Verification() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [statement, setStatement] = useState<Statement | null>()
+  return (
+    <Suspense>
+      <VerificationContent />
+    </Suspense>
+  )
+}
 
-  const handleVerifyStatement = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    const formData = new FormData(e.target as HTMLFormElement)
-    const message = formData.get('statement') as string
-
-    try {
-      const statement = await getStatement(getStatementHash(message))
-      setStatement(statement)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('An unknown error occurred')
-      }
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+function VerificationContent() {
+  const searchParams = useSearchParams()
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -81,128 +69,11 @@ export default function Verification() {
               </TabsList> */}
 
               <TabsContent value="statement">
-                <div className="space-y-4">
-                  <form onSubmit={handleVerifyStatement} className="flex gap-2">
-                    <Input
-                      name="statement"
-                      placeholder="Paste statement"
-                      className="border-gray-700 bg-gray-900"
-                    />
-                    <Button
-                      type="submit"
-                      loading={isSubmitting}
-                      disabled={isSubmitting}
-                      className="bg-emerald-500 text-black hover:bg-emerald-600"
-                    >
-                      <Search className="h-4 w-4" />
-                      Fetch proof
-                    </Button>
-                  </form>
-
-                  {/* <div className="flex items-start gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
-                    <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
-                    <div>
-                      <p className="mb-2 font-medium text-emerald-300">
-                        Statement Verified!
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        This statement was created by a verified member of the
-                        10k voting power pool. The zero-knowledge proof confirms
-                        pool membership without revealing the specific delegate
-                        identity.
-                      </p>
-                    </div>
-                  </div> */}
-
-                  {statement === null && !isSubmitting && (
-                    <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
-                      <p className="text-gray-400">
-                        No statement found. Please try again.
-                      </p>
-                    </div>
-                  )}
-
-                  {statement && !isSubmitting && (
-                    <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
-                      <div className="mb-3 flex items-center gap-2">
-                        <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                        <span className="font-mono text-sm text-emerald-500">
-                          10k Pool
-                        </span>
-                        <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
-                          <CheckCircle className="h-3 w-3 text-emerald-500" />
-                          <span>Verified</span>
-                        </div>
-                      </div>
-
-                      <p className="mb-4 text-gray-200">
-                        {statement.statement}
-                      </p>
-
-                      <div className="text-sm text-gray-400">
-                        <span>
-                          {new Date(statement.timestamp).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="mt-4">
-                        <h3 className="mb-3 text-lg font-medium">
-                          Semaphore Proof
-                        </h3>
-
-                        <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
-                          {JSON.stringify(statement.proof, null, 2)}
-                        </pre>
-                      </div>
-
-                      <div className="mt-4">
-                        <h3 className="text-lg font-medium">
-                          Onchain Verification
-                        </h3>
-
-                        <CardDescription className="mb-3">
-                          Pass the following data to{' '}
-                          <a
-                            href={`https://etherscan.io/address/${delegatePoolsAddress}#readContract#F6`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-emerald-500 hover:text-emerald-400"
-                          >
-                            <code className="font-mono">verifyStatement()</code>{' '}
-                          </a>
-                          on the smart contract to verify the message.
-                        </CardDescription>
-
-                        <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
-                          {JSON.stringify(
-                            {
-                              minVotes: statement.minVotes,
-                              statement: statement.statement,
-                              proof: encodeAbiParameters(
-                                [
-                                  { name: 'merkleTreeDepth', type: 'uint256' },
-                                  { name: 'merkleTreeRoot', type: 'uint256' },
-                                  { name: 'nullifier', type: 'uint256' },
-                                  { name: 'scope', type: 'uint256' },
-                                  { name: 'points', type: 'uint256[8]' },
-                                ],
-                                [
-                                  BigInt(statement.proof.merkleTreeDepth),
-                                  BigInt(statement.proof.merkleTreeRoot),
-                                  BigInt(statement.proof.nullifier),
-                                  statement.proof.scope,
-                                  statement.proof.points,
-                                ]
-                              ),
-                            },
-                            null,
-                            2
-                          )}
-                        </pre>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <SearchByStatement
+                  statementFromSearchParams={
+                    searchParams.get('statement') ?? ''
+                  }
+                />
               </TabsContent>
 
               <TabsContent value="proof">
@@ -322,6 +193,161 @@ export default function Verification() {
           </div>
         </div>
       </main>
+    </div>
+  )
+}
+
+function SearchByStatement({
+  statementFromSearchParams,
+}: {
+  statementFromSearchParams: string
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [statement, setStatement] = useState<Statement | null>()
+  const formRef = useRef<HTMLFormElement>(null)
+
+  useEffect(() => {
+    if (formRef.current) {
+      // Submit form on page load if we have a statement in the URL
+      formRef.current.dispatchEvent(new Event('submit', { bubbles: true }))
+    }
+  }, [statementFromSearchParams])
+
+  const handleVerifyStatement = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    const formData = new FormData(e.target as HTMLFormElement)
+    const message = formData.get('statement') as string
+
+    try {
+      const statement = await getStatement(getStatementHash(message))
+      setStatement(statement)
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert('An unknown error occurred')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <form
+        ref={formRef}
+        onSubmit={handleVerifyStatement}
+        className="flex gap-2"
+      >
+        <Input
+          name="statement"
+          placeholder="Paste statement"
+          defaultValue={statementFromSearchParams}
+          className="border-gray-700 bg-gray-900"
+        />
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          disabled={isSubmitting}
+          className="bg-emerald-500 text-black hover:bg-emerald-600"
+        >
+          <Search className="h-4 w-4" />
+          Fetch proof
+        </Button>
+      </form>
+
+      {/* <div className="flex items-start gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
+                    <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
+                    <div>
+                      <p className="mb-2 font-medium text-emerald-300">
+                        Statement Verified!
+                      </p>
+                      <p className="text-sm text-gray-300">
+                        This statement was created by a verified member of the
+                        10k voting power pool. The zero-knowledge proof confirms
+                        pool membership without revealing the specific delegate
+                        identity.
+                      </p>
+                    </div>
+                  </div> */}
+
+      {statement === null && !isSubmitting && (
+        <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
+          <p className="text-gray-400">No statement found. Please try again.</p>
+        </div>
+      )}
+
+      {statement && !isSubmitting && (
+        <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+            <span className="font-mono text-sm text-emerald-500">10k Pool</span>
+            <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
+              <CheckCircle className="h-3 w-3 text-emerald-500" />
+              <span>Verified</span>
+            </div>
+          </div>
+
+          <p className="mb-4 text-gray-200">{statement.statement}</p>
+
+          <div className="text-sm text-gray-400">
+            <span>{new Date(statement.timestamp).toLocaleString()}</span>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="mb-3 text-lg font-medium">Semaphore Proof</h3>
+
+            <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+              {JSON.stringify(statement.proof, null, 2)}
+            </pre>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-lg font-medium">Onchain Verification</h3>
+
+            <CardDescription className="mb-3">
+              Pass the following data to{' '}
+              <a
+                href={`https://etherscan.io/address/${delegatePoolsAddress}#readContract#F6`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-500 hover:text-emerald-400"
+              >
+                <code className="font-mono">verifyStatement()</code>{' '}
+              </a>
+              on the smart contract to verify the message.
+            </CardDescription>
+
+            <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+              {JSON.stringify(
+                {
+                  minVotes: statement.minVotes,
+                  statement: statement.statement,
+                  proof: encodeAbiParameters(
+                    [
+                      { name: 'merkleTreeDepth', type: 'uint256' },
+                      { name: 'merkleTreeRoot', type: 'uint256' },
+                      { name: 'nullifier', type: 'uint256' },
+                      { name: 'scope', type: 'uint256' },
+                      { name: 'points', type: 'uint256[8]' },
+                    ],
+                    [
+                      BigInt(statement.proof.merkleTreeDepth),
+                      BigInt(statement.proof.merkleTreeRoot),
+                      BigInt(statement.proof.nullifier),
+                      statement.proof.scope,
+                      statement.proof.points,
+                    ]
+                  ),
+                },
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

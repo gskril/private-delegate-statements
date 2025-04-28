@@ -113,12 +113,20 @@ export default function StatementForm() {
           <p className="mb-2">Guidelines:</p>
           <ul className="list-inside list-disc space-y-1">
             <li>
+              The more people in the pool, the harder it is to identify you as
+              the author.
+            </li>
+            <li>
               Your statement will be associated with the pool you select, not
               your specific identity.
             </li>
             <li>
               As a general best practice, you should not post a statement
               immediately after joining a pool.
+            </li>
+            <li>
+              Consider using AI to rephrase your wording before posting so that
+              it&apos;s harder to identity you based on writing style.
             </li>
           </ul>
         </div>
@@ -177,7 +185,7 @@ function PoolSelector({ pools }: { pools: Pool[] }) {
               <RadioGroupItem value={minVotesStr} id={minVotesStr} />
               <Label
                 htmlFor={minVotesStr}
-                className="flex cursor-pointer flex-col"
+                className="flex w-full cursor-pointer flex-col"
               >
                 <span className="font-medium">
                   {formatMinVotes(pool.minVotes)} Pool

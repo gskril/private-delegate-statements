@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckCircle, Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 import { useStatements } from '@/hooks/useStatements'
 import { formatMinVotes } from '@/lib/utils'
@@ -28,10 +29,13 @@ export default function StatementFeed() {
                 {formatMinVotes(BigInt(statement.minVotes))} Pool with{' '}
                 {statement.groupSize} members
               </span>
-              <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
+              <Link
+                href={`/verification?statement=${encodeURI(statement.statement)}`}
+                className="ml-auto flex items-center gap-1 text-sm text-gray-400"
+              >
                 <CheckCircle className="h-3 w-3 text-emerald-500" />
-                <span>Verified</span>
-              </div>
+                <span>View Proof</span>
+              </Link>
             </div>
 
             <p className="mb-4 text-gray-200">{statement.statement}</p>

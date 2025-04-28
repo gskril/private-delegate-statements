@@ -33,7 +33,7 @@ export function usePools(address?: Address) {
       const filter = await client.createEventFilter({
         address: delegatePoolsAddress,
         events: delegatePoolsEventsAbi,
-        fromBlock: 22355096n,
+        fromBlock: 22369782n,
       })
 
       const logs = await client.getFilterLogs({ filter })
