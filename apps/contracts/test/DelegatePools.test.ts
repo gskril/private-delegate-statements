@@ -1,19 +1,17 @@
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox-viem/network-helpers'
 import { Group } from '@semaphore-protocol/group'
 import { Identity } from '@semaphore-protocol/identity'
-import { generateProof } from '@semaphore-protocol/proof'
+import { generateProof, verifyProof } from '@semaphore-protocol/proof'
 import { expect } from 'chai'
 import hre from 'hardhat'
 import {
-  ContractFunctionExecutionError,
+  encodeAbiParameters,
   formatEther,
   keccak256,
   toHex,
   zeroAddress,
 } from 'viem'
 import { parseEther } from 'viem/utils'
-
-import { formatProof } from './utils'
 
 const account0 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' // deployer, owner, 0 votes
 const account1 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // user with 0 votes
@@ -141,23 +139,50 @@ describe('Tests', function () {
     // Create the group offline, generate a proof with a statement
     const group = new Group([identity.commitment])
     const scope = await semaphore.read.getMerkleTreeRoot([groupId])
+    const statement =
+      'This is a hot take about the DAO from a large delegate, without revealing which delegate'
     const proof = await generateProof(
       identity,
       group,
-      keccak256(
-        toHex(
-          'This is a hot take about the DAO from a large delegate, without revealing which delegate'
-        )
-      ),
+      keccak256(toHex(statement)),
       scope
+    )
+
+    const offchainVerified = await verifyProof(proof)
+    expect(offchainVerified).to.equal(true)
+
+    const encodedProof = encodeAbiParameters(
+      [
+        { name: 'merkleTreeDepth', type: 'uint256' },
+        { name: 'merkleTreeRoot', type: 'uint256' },
+        { name: 'nullifier', type: 'uint256' },
+        { name: 'scope', type: 'uint256' },
+        { name: 'points', type: 'uint256[8]' },
+      ],
+      [
+        BigInt(proof.merkleTreeDepth),
+        BigInt(proof.merkleTreeRoot),
+        BigInt(proof.nullifier),
+        scope,
+        proof.points,
+      ]
     )
 
     // Verify that the statement came from a member of the group
     const verified = await contract.read.verifyMessage([
-      groupId,
-      formatProof(proof),
+      minVotes,
+      statement,
+      encodedProof,
     ])
     expect(verified).to.equal(true)
+
+    // Verify that the proof is for a specific statement
+    const notVerified = await contract.read.verifyMessage([
+      minVotes,
+      'proof is for a different statement',
+      encodedProof,
+    ])
+    expect(notVerified).to.equal(false)
 
     // Try to generate a proof for a statement from a non-member, which should fail
     try {

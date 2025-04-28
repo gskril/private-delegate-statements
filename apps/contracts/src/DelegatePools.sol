@@ -82,11 +82,33 @@ contract DelegatePools is Ownable {
         }
     }
 
-    function verifyMessage(
-        uint256 groupId,
-        Semaphore.SemaphoreProof calldata proof
+    /// @notice Verify a statement from an anonymous member of a pool.
+    function verifyStatement(
+        uint256 minVotes,
+        string calldata statement,
+        bytes calldata proof
     ) external view returns (bool) {
-        return semaphore.verifyProof(groupId, proof);
+        (
+            uint256 merkleTreeDepth,
+            uint256 merkleTreeRoot,
+            uint256 nullifier,
+            uint256 scope,
+            uint256[8] memory points
+        ) = abi.decode(proof, (uint256, uint256, uint256, uint256, uint256[8]));
+
+        uint256 semaphoreGroupId = pools[minVotes];
+
+        ISemaphore.SemaphoreProof memory reconstructedProof = ISemaphore
+            .SemaphoreProof({
+                merkleTreeDepth: merkleTreeDepth,
+                merkleTreeRoot: merkleTreeRoot,
+                nullifier: nullifier,
+                message: uint256(keccak256(bytes(statement))),
+                scope: scope,
+                points: points
+            });
+
+        return semaphore.verifyProof(semaphoreGroupId, reconstructedProof);
     }
 
     function getVotes(address account) external view returns (uint256) {
