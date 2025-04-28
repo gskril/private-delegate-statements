@@ -3,12 +3,9 @@
 import { Identity } from '@semaphore-protocol/identity'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { encodeFunctionData } from 'viem'
 import {
   useAccount,
-  usePrepareTransactionRequest,
   useSignMessage,
-  useSimulateContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi'
