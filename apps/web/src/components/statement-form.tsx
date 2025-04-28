@@ -127,8 +127,8 @@ export default function StatementForm() {
           <div className="flex items-center gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
             <CheckCircle className="h-5 w-5 flex-shrink-0 text-emerald-500" />
             <p className="text-emerald-300">
-              A ZK proof has been generated for your statement! See the "View
-              Statements" tab.
+              A ZK proof has been generated for your statement! See the
+              &quot;View Statements&quot; tab.
             </p>
           </div>
         )}
