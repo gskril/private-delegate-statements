@@ -5,10 +5,15 @@ export const erc20WithVotesAbi = parseAbi([
 ])
 
 export const delegatePoolsAddress = '0x0000000000D4BB6B814f94dE0a9d7b1c14864065'
+export const semaphoreAddress = '0x4ca12bd748f8567c92ed65ea46b8913d038f99f2'
 
 export const delegatePoolsEventsAbi = parseAbi([
   'event PoolCreated(uint256 indexed minVotes, uint256 indexed groupId)',
   'event PoolJoined(uint256 indexed minVotes, address indexed member)',
+])
+
+export const semaphoreEventsAbi = parseAbi([
+  'event MemberAdded(uint256 indexed groupId, uint256 index, uint256 identityCommitment, uint256 merkleTreeRoot)',
 ])
 
 export const delegatePoolsAbi = [

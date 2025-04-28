@@ -2,15 +2,23 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { type Address } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-import { delegatePoolsAddress, delegatePoolsEventsAbi } from '@/lib/abi'
+import {
+  delegatePoolsAddress,
+  delegatePoolsEventsAbi,
+  semaphoreAddress,
+  semaphoreEventsAbi,
+} from '@/lib/abi'
 
-interface Pool {
-  members: Address[]
+export interface Pool {
+  members: {
+    address: Address
+    identityCommitment: bigint
+  }[]
   minVotes: bigint
   groupId: bigint
 }
 
-interface PoolWithJoined extends Pool {
+export interface PoolWithJoined extends Pool {
   joined: boolean
 }
 
@@ -28,35 +36,50 @@ export function usePools(address?: Address) {
       }
 
       const filter = await client.createEventFilter({
-        address: delegatePoolsAddress,
-        events: delegatePoolsEventsAbi,
+        address: [delegatePoolsAddress, semaphoreAddress],
+        events: [...delegatePoolsEventsAbi, ...semaphoreEventsAbi],
         fromBlock: 22355096n,
       })
 
       const logs = await client.getFilterLogs({ filter })
 
-      const poolCreatedLogs = logs
-        .filter((log) => log.eventName === 'PoolCreated')
-        .map((log) => log.args)
+      const poolCreatedLogs = logs.filter(
+        (log) => log.eventName === 'PoolCreated'
+      )
 
-      const poolJoinedLogs = logs
-        .filter((log) => log.eventName === 'PoolJoined')
-        .map((log) => log.args)
+      const poolJoinedLogs = logs.filter(
+        (log) => log.eventName === 'PoolJoined'
+      )
+
+      const memberAddedLogs = logs.filter(
+        (log) => log.eventName === 'MemberAdded'
+      )
 
       // Combine the events to get the members of each pool
       const pools = poolCreatedLogs.map((pool) => {
-        const members = poolJoinedLogs
-          .filter((log) => log.minVotes === pool.minVotes)
-          .map((log) => log.member)
+        const members = new Array<Pool['members'][number]>()
 
-        return { ...pool, members }
+        poolJoinedLogs
+          .filter((log) => log.args.minVotes === pool.args.minVotes)
+          .map((log) => {
+            const memberAddedLog = memberAddedLogs.find(
+              (innerLog) => log.transactionHash === innerLog.transactionHash
+            )
+
+            members.push({
+              address: log.args.member!,
+              identityCommitment: memberAddedLog!.args.identityCommitment!,
+            })
+          })
+
+        return { ...pool.args, members }
       })
 
       if (address) {
         // Add `joined` boolean to each pool
         return pools.map((pool) => ({
           ...pool,
-          joined: pool.members.includes(address),
+          joined: pool.members.some((member) => member.address === address),
         }))
       }
 
