@@ -4,7 +4,7 @@ export const erc20WithVotesAbi = parseAbi([
   'function getVotes(address account) view returns (uint256)',
 ])
 
-export const delegatePoolsAddress = '0x0000000000D4BB6B814f94dE0a9d7b1c14864065'
+export const delegatePoolsAddress = '0x0000000000572fA1d5fc39988eD0785AF08B0d99'
 
 export const delegatePoolsEventsAbi = parseAbi([
   'event PoolCreated(uint256 indexed minVotes, uint256 groupId)',

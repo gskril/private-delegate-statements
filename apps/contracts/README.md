@@ -7,7 +7,7 @@ Smart contract that regulates access to anonymity pools of DAO delegates.
 | Contract          | Address                                    |
 | ----------------- | ------------------------------------------ |
 | Semaphore.sol     | 0x4ca12bd748f8567c92ed65ea46b8913d038f99f2 |
-| DelegatePools.sol | 0x0000000000D4BB6B814f94dE0a9d7b1c14864065 |
+| DelegatePools.sol | 0x0000000000572fA1d5fc39988eD0785AF08B0d99 |
 
 ## Local Development
 
