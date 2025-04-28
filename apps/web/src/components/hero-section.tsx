@@ -27,7 +27,7 @@ export default function HeroSection() {
         >
           Join a Pool <ChevronRight className="ml-2 h-5 w-5" />
         </Link>
-        <Link
+        {/* <Link
           href="/verification"
           className={cn(
             buttonVariants({ variant: 'outline' }),
@@ -35,7 +35,7 @@ export default function HeroSection() {
           )}
         >
           View Statements
-        </Link>
+        </Link> */}
       </div>
       <div className="w-full max-w-4xl rounded-xl bg-gradient-to-br from-emerald-900/30 to-teal-900/30 p-6 sm:p-12">
         <div className="flex items-center justify-center">
