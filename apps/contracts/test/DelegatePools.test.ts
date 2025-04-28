@@ -4,7 +4,13 @@ import { Identity } from '@semaphore-protocol/identity'
 import { generateProof } from '@semaphore-protocol/proof'
 import { expect } from 'chai'
 import hre from 'hardhat'
-import { formatEther, keccak256, toHex, zeroAddress } from 'viem'
+import {
+  ContractFunctionExecutionError,
+  formatEther,
+  keccak256,
+  toHex,
+  zeroAddress,
+} from 'viem'
 import { parseEther } from 'viem/utils'
 
 import { formatProof } from './utils'
@@ -180,5 +186,29 @@ describe('Tests', function () {
     await contract.write.joinPools([minVotes, identity.commitment], {
       account: account2,
     })
+  })
+
+  // Currently the same delegate can join a pool multiple times with a different `identityCommitment`, which I think is ok
+  it('should not allow the same delegate to join pool multiple times with the same identity', async function () {
+    const { contract } = await loadFixture(deploy)
+
+    const identity = new Identity()
+    const minVotes = parseEther('1000')
+
+    await contract.write.createPool([minVotes])
+    await contract.write.joinPool([minVotes, identity.commitment], {
+      account: account2,
+    })
+
+    try {
+      await contract.write.joinPool([minVotes, identity.commitment], {
+        account: account2,
+      })
+    } catch (error) {
+      expect(error).to.be.instanceOf(ContractFunctionExecutionError)
+      expect((error as ContractFunctionExecutionError).message).to.include(
+        'LeafAlreadyExists()'
+      )
+    }
   })
 })
