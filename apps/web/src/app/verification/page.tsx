@@ -134,13 +134,13 @@ export default function Verification() {
                       </div>
 
                       <p className="mb-4 text-gray-200">
-                        I believe we should allocate more resources to research
-                        before voting on Proposal #42. The current approach
-                        lacks sufficient data to make an informed decision.
+                        {statement.statement}
                       </p>
 
                       <div className="text-sm text-gray-400">
-                        <span>Posted 2 hours ago</span>
+                        <span>
+                          {new Date(statement.timestamp).toLocaleString()}
+                        </span>
                       </div>
 
                       <div className="mt-4">
