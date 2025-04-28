@@ -1,13 +1,12 @@
 'use client'
 
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Eye, MessageSquare, Shield } from 'lucide-react'
+import { Eye, Loader2, MessageSquare, Shield } from 'lucide-react'
 import { formatEther } from 'viem/utils'
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 
 import DashboardNav from '@/components/dashboard-nav'
 import { JoinPoolsDialog } from '@/components/join-pools-dialog'
-import PoolSelector from '@/components/pool-selector'
 import StatementFeed from '@/components/statement-feed'
 import StatementForm from '@/components/statement-form'
 import { Button } from '@/components/ui/button'
@@ -30,9 +29,9 @@ export default function Dashboard() {
   const { data: votingPower } = useVotingPower({ address })
   const { disconnect } = useDisconnect()
   const { openConnectModal } = useConnectModal()
-  const { data: pools } = usePools(address)
+  const pools = usePools(address)
 
-  const hasUnjoinedPools = pools?.some((pool) => !pool.joined)
+  const hasUnjoinedPools = pools.data?.some((pool) => !pool.joined)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -127,7 +126,11 @@ export default function Dashboard() {
                 <CardTitle>Available Pools</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {pools?.map((pool) => (
+                {pools.isLoading && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+
+                {pools.data?.map((pool) => (
                   <div
                     key={pool.groupId}
                     className="flex items-center justify-between"
@@ -142,7 +145,7 @@ export default function Dashboard() {
                   </div>
                 ))}
 
-                <JoinPoolsDialog disabled={!hasUnjoinedPools} />
+                {address && <JoinPoolsDialog disabled={!hasUnjoinedPools} />}
               </CardContent>
             </Card>
           </div>
@@ -176,7 +179,6 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <PoolSelector />
                     <StatementForm />
                   </CardContent>
                 </Card>

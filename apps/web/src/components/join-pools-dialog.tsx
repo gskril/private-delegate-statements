@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dialog'
 import { usePools } from '@/hooks/usePools'
 import { delegatePoolsAbi, delegatePoolsAddress } from '@/lib/abi'
+import { cn } from '@/lib/utils'
 
 import { Button } from './ui/button'
 
@@ -62,8 +63,7 @@ export function JoinPoolsDialog({ disabled }: Props) {
       <DialogTrigger asChild>
         <Button
           disabled={disabled}
-          loading={pools.isLoading}
-          className="w-full"
+          className={cn('w-full', pools.isLoading && 'hidden')}
         >
           {disabled ? 'Already in All Pools' : 'Join Available Pools'}
         </Button>

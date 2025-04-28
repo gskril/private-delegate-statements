@@ -108,9 +108,15 @@ importers:
       '@rainbow-me/rainbowkit':
         specifier: ^2.2.2
         version: 2.2.2(@tanstack/react-query@5.64.2(react@19.0.0))(@types/react@19.0.7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(viem@2.22.10(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10))(wagmi@2.14.8(@tanstack/query-core@5.64.2)(@tanstack/react-query@5.64.2(react@19.0.0))(@types/react@19.0.7)(bufferutil@4.0.8)(immer@10.0.2)(react@19.0.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.22.10(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)))
+      '@semaphore-protocol/group':
+        specifier: ^4.9.2
+        version: 4.9.2
       '@semaphore-protocol/identity':
         specifier: ^4.9.2
         version: 4.9.2
+      '@semaphore-protocol/proof':
+        specifier: ^4.9.2
+        version: 4.9.2(@semaphore-protocol/group@4.9.2)(@semaphore-protocol/identity@4.9.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@tanstack/react-query':
         specifier: ^5.64.2
         version: 5.64.2(react@19.0.0)
