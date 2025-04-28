@@ -21,6 +21,10 @@ contract DelegatePools is Ownable {
     /// @notice A mapping of the minimum votes required to join a pool to the Semaphore group ID.
     mapping(uint256 minVotes => uint256 groupId) public pools;
 
+    /// @notice A mapping to keep track of which delegates have joined which pools.
+    /// @dev The key is `keccak256(abi.encode(address, minVotes))` for efficient storage.
+    mapping(bytes32 => bool) internal _delegatePools;
+
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -36,6 +40,7 @@ contract DelegatePools is Ownable {
     error SemaphoreNotInitialized();
     error PoolDoesNotExist(uint256 minVotes);
     error PoolAlreadyExists(uint256 minVotes);
+    error AlreadyJoined(address delegate, uint256 minVotes);
     error InsufficientVotes(uint256 votes, uint256 minVotes);
 
     /*//////////////////////////////////////////////////////////////
@@ -123,8 +128,16 @@ contract DelegatePools is Ownable {
             revert InsufficientVotes(token.getVotes(msg.sender), minVotes);
         }
 
+        bytes32 delegatePoolKey = keccak256(abi.encode(msg.sender, minVotes));
+
+        // Check if the user has already joined this pool
+        if (_delegatePools[delegatePoolKey]) {
+            revert AlreadyJoined(msg.sender, minVotes);
+        }
+
         // Add the user to the Semaphore group
         semaphore.addMember(pools[minVotes], identityCommitment);
+        _delegatePools[delegatePoolKey] = true;
         emit PoolJoined(minVotes, msg.sender);
     }
 }

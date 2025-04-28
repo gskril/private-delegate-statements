@@ -188,8 +188,7 @@ describe('Tests', function () {
     })
   })
 
-  // Currently the same delegate can join a pool multiple times with a different `identityCommitment`, which I think is ok
-  it('should not allow the same delegate to join pool multiple times with the same identity', async function () {
+  it('should not allow the same delegate to join pool multiple times', async function () {
     const { contract } = await loadFixture(deploy)
 
     const identity = new Identity()
@@ -200,15 +199,13 @@ describe('Tests', function () {
       account: account2,
     })
 
-    try {
-      await contract.write.joinPool([minVotes, identity.commitment], {
-        account: account2,
-      })
-    } catch (error) {
-      expect(error).to.be.instanceOf(ContractFunctionExecutionError)
-      expect((error as ContractFunctionExecutionError).message).to.include(
-        'LeafAlreadyExists()'
-      )
-    }
+    const identity2 = new Identity()
+    const join2 = contract.write.joinPool([minVotes, identity2.commitment], {
+      account: account2,
+    })
+
+    await expect(join2).to.be.rejectedWith(
+      `AlreadyJoined("${account2}", ${minVotes})`
+    )
   })
 })
