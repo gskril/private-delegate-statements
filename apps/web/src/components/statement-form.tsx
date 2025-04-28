@@ -64,7 +64,7 @@ export default function StatementForm() {
       )
       console.log({ proof })
 
-      await saveStatement({ statement, minVotes, proof })
+      await saveStatement({ groupSize: group.size, statement, minVotes, proof })
       setIsSuccess(true)
     } catch (error) {
       if (error instanceof Error) {

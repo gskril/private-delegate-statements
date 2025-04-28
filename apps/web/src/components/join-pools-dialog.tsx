@@ -62,7 +62,7 @@ export function JoinPoolsDialog({ disabled }: Props) {
           disabled={disabled}
           className={cn('w-full', pools.isLoading && 'hidden')}
         >
-          {disabled ? 'Not Eligible' : 'Join Available Pools'}
+          {disabled ? 'Not Eligible to Join Pools' : 'Join Eligible Pools'}
         </Button>
       </DialogTrigger>
       <DialogContent>

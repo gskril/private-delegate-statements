@@ -1,15 +1,17 @@
 'use server'
 
-import { SemaphoreProof } from '@semaphore-protocol/proof'
+import { type SemaphoreProof } from '@semaphore-protocol/proof'
 
 import { getStatementHash, redis } from './redis'
-import { RedisStatement } from './types'
+import { type RedisStatement } from './types'
 
 export async function saveStatement({
+  groupSize,
   statement,
   minVotes,
   proof,
 }: {
+  groupSize: number
   statement: string
   minVotes: bigint
   proof: SemaphoreProof
@@ -19,6 +21,7 @@ export async function saveStatement({
   const object: RedisStatement = {
     statement,
     minVotes: minVotes.toString(),
+    groupSize,
     proof,
     timestamp: Date.now(),
   }

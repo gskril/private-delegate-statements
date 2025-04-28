@@ -33,7 +33,8 @@ export default function StatementFeed() {
             <div className="mb-3 flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
               <span className="font-mono text-sm text-emerald-500">
-                {formatMinVotes(BigInt(statement.minVotes))} Pool
+                {formatMinVotes(BigInt(statement.minVotes))} Pool with{' '}
+                {statement.groupSize} members
               </span>
               <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
                 <CheckCircle className="h-3 w-3 text-emerald-500" />
