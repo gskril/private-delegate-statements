@@ -1,4 +1,9 @@
+'use client'
+
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import { Eye, MessageSquare, Shield } from 'lucide-react'
+import { formatEther } from 'viem/utils'
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 
 import DashboardNav from '@/components/dashboard-nav'
 import PoolSelector from '@/components/pool-selector'
@@ -13,8 +18,19 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { usePools } from '@/hooks/usePools'
+import { useVotingPower } from '@/hooks/useVotingPower'
+import { cn, formatMinVotes, truncateAddress } from '@/lib/utils'
 
 export default function Dashboard() {
+  const { address } = useAccount()
+  const { data: ensName } = useEnsName({ address })
+  const { data: ensAvatar } = useEnsAvatar({ name: ensName || undefined })
+  const { data: votingPower } = useVotingPower({ address })
+  const { disconnect } = useDisconnect()
+  const { openConnectModal } = useConnectModal()
+  const { data: pools } = usePools(address)
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <DashboardNav />
@@ -28,69 +44,101 @@ export default function Dashboard() {
                 <CardDescription>Manage your delegate identity</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20">
-                    <Shield className="h-6 w-6 text-emerald-500" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Anonymous Delegate</p>
-                    <p className="text-sm text-gray-400">
-                      Connected: 0x1a2...3b4c
-                    </p>
-                  </div>
-                </div>
+                {(() => {
+                  if (address) {
+                    return (
+                      <>
+                        <div className="mb-4 flex items-center gap-3">
+                          <div
+                            className={cn(
+                              'flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20'
+                            )}
+                            style={
+                              ensAvatar
+                                ? {
+                                    backgroundImage: `linear-gradient(0deg, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.8)), url(${ensAvatar})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                  }
+                                : undefined
+                            }
+                          >
+                            <Shield
+                              className={cn(
+                                'h-6 w-6 text-emerald-500',
+                                ensAvatar && 'text-white'
+                              )}
+                            />
+                          </div>
+                          <div>
+                            <p className="font-medium">Anonymous Delegate</p>
+                            <p className="text-sm text-gray-400">
+                              Connected:{' '}
+                              {ensName && ensName.length <= 16
+                                ? ensName
+                                : truncateAddress(address)}
+                            </p>
+                          </div>
+                        </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Voting Power</p>
-                    <p className="font-medium">12,500</p>
-                  </div>
+                        <div className="space-y-4">
+                          <div>
+                            <p className="text-sm text-gray-400">
+                              Voting Power
+                            </p>
+                            <p className="font-medium">
+                              {votingPower ? (
+                                new Intl.NumberFormat('en-US').format(
+                                  Number(formatEther(votingPower))
+                                )
+                              ) : (
+                                <span>&nbsp;</span>
+                              )}
+                            </p>
+                          </div>
 
-                  <div>
-                    <p className="text-sm text-gray-400">Current Pool</p>
-                    <p className="font-medium text-emerald-400">10k Pool</p>
-                  </div>
+                          <Button
+                            variant="outline"
+                            className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500/10"
+                            onClick={() => disconnect()}
+                          >
+                            Disconnect
+                          </Button>
+                        </div>
+                      </>
+                    )
+                  }
 
-                  <Button
-                    variant="outline"
-                    className="w-full border-emerald-500 text-emerald-500 hover:bg-emerald-500/10"
-                  >
-                    Change Pool
-                  </Button>
-                </div>
+                  return (
+                    <Button
+                      className="w-full bg-emerald-500 text-black hover:bg-emerald-600"
+                      onClick={openConnectModal}
+                    >
+                      Connect
+                    </Button>
+                  )
+                })()}
               </CardContent>
             </Card>
 
             <Card className="mt-6 border-gray-700 bg-gray-800/50">
               <CardHeader>
-                <CardTitle>Active Pools</CardTitle>
-                <CardDescription>Anonymity pool statistics</CardDescription>
+                <CardTitle>Available Pools</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                      <span>1k Pool</span>
+                  {pools?.map((pool) => (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                        <span>{formatMinVotes(pool.minVotes!)} Pool</span>
+                      </div>
+                      <span className="text-gray-400">
+                        {pool.members.length} members
+                      </span>
                     </div>
-                    <span className="text-gray-400">42 members</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                      <span>10k Pool</span>
-                    </div>
-                    <span className="text-gray-400">18 members</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-                      <span>50k Pool</span>
-                    </div>
-                    <span className="text-gray-400">7 members</span>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

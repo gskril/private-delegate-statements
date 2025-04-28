@@ -1,6 +1,6 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { createConfig, http } from 'wagmi'
-import { base, mainnet } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 const WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_ID
 
@@ -13,13 +13,13 @@ const { connectors } = getDefaultWallets({
   projectId: WALLETCONNECT_ID,
 })
 
-const chains = [base, mainnet] as const
+const chains = [mainnet] as const
 
 export const wagmiConfig = createConfig({
   chains,
   connectors,
   transports: {
-    [base.id]: http(),
-    [mainnet.id]: http(),
+    // Not all RPC providers work well with filtered logs. Alchemy is recommended.
+    [mainnet.id]: http(process.env.NEXT_PUBLIC_RPC_URL),
   },
 })
