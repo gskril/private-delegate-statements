@@ -73,7 +73,8 @@ export function JoinPoolsDialog({ disabled }: Props) {
           <DialogTitle>Join Available Pools</DialogTitle>
 
           <DialogDescription>
-            First, you will need to sign a message to create your{' '}
+            First, you will need to sign a message to generate your
+            deterministic{' '}
             <a
               href="https://docs.semaphore.pse.dev/guides/identities#create-deterministic-identities"
               target="_blank"
