@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { Pool, usePools } from '@/hooks/usePools'
+import { saveStatement } from '@/lib/actions'
 import { cn, formatMinVotes } from '@/lib/utils'
 
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
@@ -27,10 +28,8 @@ export default function StatementForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true)
-    const formData = new FormData(e.target as HTMLFormElement)
     const statement = formData.get('statement') as string
     const pool = formData.get('pool') as string
 
@@ -43,20 +42,20 @@ export default function StatementForm() {
 
     const minVotes = BigInt(pool)
 
-    const data = await sign.signMessageAsync({
-      message: 'Generate my private delegate identity',
-    })
-
-    // Identity commitments of everyone in the pool
-    const group = new Group(
-      joinedPools
-        .find((p) => p.minVotes === minVotes)!
-        .members.map((m) => m.identityCommitment)
-    )
-    const scope = group.root
-    const identity = new Identity(data)
-
     try {
+      const data = await sign.signMessageAsync({
+        message: 'Generate my private delegate identity',
+      })
+
+      // Identity commitments of everyone in the pool
+      const group = new Group(
+        joinedPools
+          .find((p) => p.minVotes === minVotes)!
+          .members.map((m) => m.identityCommitment)
+      )
+      const scope = group.root
+      const identity = new Identity(data)
+
       const proof = await generateProof(
         identity,
         group,
@@ -64,6 +63,8 @@ export default function StatementForm() {
         scope
       )
       console.log({ proof })
+
+      await saveStatement({ statement, minVotes, proof })
       setIsSuccess(true)
     } catch (error) {
       if (error instanceof Error) {
@@ -97,7 +98,7 @@ export default function StatementForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={handleSubmit}>
       <PoolSelector pools={joinedPools} />
 
       <div className="space-y-4">
@@ -126,8 +127,8 @@ export default function StatementForm() {
           <div className="flex items-center gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
             <CheckCircle className="h-5 w-5 flex-shrink-0 text-emerald-500" />
             <p className="text-emerald-300">
-              A ZK proof has been generated for your statement! (Check the
-              console)
+              A ZK proof has been generated for your statement! See the "View
+              Statements" tab.
             </p>
           </div>
         )}
