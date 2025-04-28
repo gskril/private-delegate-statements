@@ -27,7 +27,7 @@ async function main() {
 
   const { address } = await create2Deploy({
     initCode,
-    salt: '0x3536987beb258fa15ef64b4c02e36e9e3264f568a633d2be0261ff5c551369eb',
+    salt: '0xa54b46d68a4806c6511a77371b363097e1515fb18cc4dbc238abf3c20a99a2d8',
   })
 
   console.log(`Deployed ${contractName} to ${address}`)

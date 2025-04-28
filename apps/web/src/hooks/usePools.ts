@@ -2,12 +2,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { type Address } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-import {
-  delegatePoolsAddress,
-  delegatePoolsEventsAbi,
-  semaphoreAddress,
-  semaphoreEventsAbi,
-} from '@/lib/abi'
+import { delegatePoolsAddress, delegatePoolsEventsAbi } from '@/lib/abi'
 
 export interface Pool {
   members: {
@@ -36,8 +31,8 @@ export function usePools(address?: Address) {
       }
 
       const filter = await client.createEventFilter({
-        address: [delegatePoolsAddress, semaphoreAddress],
-        events: [...delegatePoolsEventsAbi, ...semaphoreEventsAbi],
+        address: delegatePoolsAddress,
+        events: delegatePoolsEventsAbi,
         fromBlock: 22355096n,
       })
 
@@ -51,25 +46,15 @@ export function usePools(address?: Address) {
         (log) => log.eventName === 'PoolJoined'
       )
 
-      const memberAddedLogs = logs.filter(
-        (log) => log.eventName === 'MemberAdded'
-      )
-
       // Combine the events to get the members of each pool
       const pools = poolCreatedLogs.map((pool) => {
-        const members = new Array<Pool['members'][number]>()
-
-        poolJoinedLogs
+        const members = poolJoinedLogs
           .filter((log) => log.args.minVotes === pool.args.minVotes)
           .map((log) => {
-            const memberAddedLog = memberAddedLogs.find(
-              (innerLog) => log.transactionHash === innerLog.transactionHash
-            )
-
-            members.push({
+            return {
               address: log.args.member!,
-              identityCommitment: memberAddedLog!.args.identityCommitment!,
-            })
+              identityCommitment: log.args.identityCommitment!,
+            }
           })
 
         return { ...pool.args, members }

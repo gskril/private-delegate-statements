@@ -21,12 +21,21 @@ contract DelegatePools is Ownable {
     /// @notice A mapping of the minimum votes required to join a pool to the Semaphore group ID.
     mapping(uint256 minVotes => uint256 groupId) public pools;
 
+    /// @notice A mapping to keep track of which delegates have joined which pools.
+    /// @dev The key is `keccak256(abi.encode(address, minVotes))` for efficient storage.
+    mapping(bytes32 => bool) internal _delegatePools;
+
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event PoolCreated(uint256 indexed minVotes, uint256 indexed groupId);
-    event PoolJoined(uint256 indexed minVotes, address indexed member);
+    event PoolCreated(uint256 indexed minVotes, uint256 groupId);
+
+    event PoolJoined(
+        uint256 indexed minVotes,
+        address indexed member,
+        uint256 identityCommitment
+    );
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -36,6 +45,7 @@ contract DelegatePools is Ownable {
     error SemaphoreNotInitialized();
     error PoolDoesNotExist(uint256 minVotes);
     error PoolAlreadyExists(uint256 minVotes);
+    error AlreadyJoined(address delegate, uint256 minVotes);
     error InsufficientVotes(uint256 votes, uint256 minVotes);
 
     /*//////////////////////////////////////////////////////////////
@@ -72,11 +82,33 @@ contract DelegatePools is Ownable {
         }
     }
 
-    function verifyMessage(
-        uint256 groupId,
-        Semaphore.SemaphoreProof calldata proof
+    /// @notice Verify a statement from an anonymous member of a pool.
+    function verifyStatement(
+        uint256 minVotes,
+        string calldata statement,
+        bytes calldata proof
     ) external view returns (bool) {
-        return semaphore.verifyProof(groupId, proof);
+        (
+            uint256 merkleTreeDepth,
+            uint256 merkleTreeRoot,
+            uint256 nullifier,
+            uint256 scope,
+            uint256[8] memory points
+        ) = abi.decode(proof, (uint256, uint256, uint256, uint256, uint256[8]));
+
+        uint256 semaphoreGroupId = pools[minVotes];
+
+        ISemaphore.SemaphoreProof memory reconstructedProof = ISemaphore
+            .SemaphoreProof({
+                merkleTreeDepth: merkleTreeDepth,
+                merkleTreeRoot: merkleTreeRoot,
+                nullifier: nullifier,
+                message: uint256(keccak256(bytes(statement))),
+                scope: scope,
+                points: points
+            });
+
+        return semaphore.verifyProof(semaphoreGroupId, reconstructedProof);
     }
 
     function getVotes(address account) external view returns (uint256) {
@@ -123,8 +155,16 @@ contract DelegatePools is Ownable {
             revert InsufficientVotes(token.getVotes(msg.sender), minVotes);
         }
 
+        bytes32 delegatePoolKey = keccak256(abi.encode(msg.sender, minVotes));
+
+        // Check if the user has already joined this pool
+        if (_delegatePools[delegatePoolKey]) {
+            revert AlreadyJoined(msg.sender, minVotes);
+        }
+
         // Add the user to the Semaphore group
         semaphore.addMember(pools[minVotes], identityCommitment);
-        emit PoolJoined(minVotes, msg.sender);
+        _delegatePools[delegatePoolKey] = true;
+        emit PoolJoined(minVotes, msg.sender, identityCommitment);
     }
 }
