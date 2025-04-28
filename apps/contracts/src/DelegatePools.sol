@@ -29,8 +29,13 @@ contract DelegatePools is Ownable {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event PoolCreated(uint256 indexed minVotes, uint256 indexed groupId);
-    event PoolJoined(uint256 indexed minVotes, address indexed member);
+    event PoolCreated(uint256 indexed minVotes, uint256 groupId);
+
+    event PoolJoined(
+        uint256 indexed minVotes,
+        address indexed member,
+        uint256 identityCommitment
+    );
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -138,6 +143,6 @@ contract DelegatePools is Ownable {
         // Add the user to the Semaphore group
         semaphore.addMember(pools[minVotes], identityCommitment);
         _delegatePools[delegatePoolKey] = true;
-        emit PoolJoined(minVotes, msg.sender);
+        emit PoolJoined(minVotes, msg.sender, identityCommitment);
     }
 }
