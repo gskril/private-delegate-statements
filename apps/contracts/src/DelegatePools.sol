@@ -8,6 +8,16 @@ import "@semaphore-protocol/contracts/Semaphore.sol";
 
 contract DelegatePools is Ownable {
     /*//////////////////////////////////////////////////////////////
+                                STRUCTS
+    //////////////////////////////////////////////////////////////*/
+
+    struct Member {
+        uint256 minVotes;
+        address delegate;
+        uint256 identityCommitment;
+    }
+
+    /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
 
@@ -70,7 +80,7 @@ contract DelegatePools is Ownable {
     //////////////////////////////////////////////////////////////*/
 
     function joinPool(uint256 minVotes, uint256 identityCommitment) external {
-        _joinPool(minVotes, identityCommitment);
+        _joinPool(minVotes, msg.sender, identityCommitment);
     }
 
     function joinPools(
@@ -78,7 +88,7 @@ contract DelegatePools is Ownable {
         uint256 identityCommitment
     ) external {
         for (uint256 i = 0; i < minVotes.length; i++) {
-            _joinPool(minVotes[i], identityCommitment);
+            _joinPool(minVotes[i], msg.sender, identityCommitment);
         }
     }
 
@@ -111,8 +121,10 @@ contract DelegatePools is Ownable {
         return semaphore.verifyProof(semaphoreGroupId, reconstructedProof);
     }
 
-    function getVotes(address account) external view returns (uint256) {
-        return token.getVotes(account);
+    /// @notice Votes for an account at the previous block.
+    /// @dev We use the previous block to prevent usage with flash loans.
+    function getVotes(address account) public view returns (uint256) {
+        return token.getPastVotes(account, block.number - 1);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -140,31 +152,47 @@ contract DelegatePools is Ownable {
         return groupId;
     }
 
+    /// @notice Add a delegate to a pool without their signature. Useful for migrating to a new contract deployment.
+    /// @dev Only callable by the owner. Still checks that the delegate has enough votes.
+    function migrate(Member[] calldata members) external onlyOwner {
+        for (uint256 i = 0; i < members.length; i++) {
+            _joinPool(
+                members[i].minVotes,
+                members[i].delegate,
+                members[i].identityCommitment
+            );
+        }
+    }
+
     /*//////////////////////////////////////////////////////////////
                            INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function _joinPool(uint256 minVotes, uint256 identityCommitment) internal {
+    function _joinPool(
+        uint256 minVotes,
+        address delegate,
+        uint256 identityCommitment
+    ) internal {
         // Check if a Semaphore group exists for the given `minVotes`
         if (pools[minVotes] == 0) {
             revert PoolDoesNotExist(minVotes);
         }
 
         // Check if the user has enough votes
-        if (token.getVotes(msg.sender) < minVotes) {
-            revert InsufficientVotes(token.getVotes(msg.sender), minVotes);
+        if (getVotes(delegate) < minVotes) {
+            revert InsufficientVotes(getVotes(delegate), minVotes);
         }
 
-        bytes32 delegatePoolKey = keccak256(abi.encode(msg.sender, minVotes));
+        bytes32 delegatePoolKey = keccak256(abi.encode(delegate, minVotes));
 
         // Check if the user has already joined this pool
         if (_delegatePools[delegatePoolKey]) {
-            revert AlreadyJoined(msg.sender, minVotes);
+            revert AlreadyJoined(delegate, minVotes);
         }
 
         // Add the user to the Semaphore group
         semaphore.addMember(pools[minVotes], identityCommitment);
         _delegatePools[delegatePoolKey] = true;
-        emit PoolJoined(minVotes, msg.sender, identityCommitment);
+        emit PoolJoined(minVotes, delegate, identityCommitment);
     }
 }
