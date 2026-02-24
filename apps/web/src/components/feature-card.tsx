@@ -14,13 +14,13 @@ export default function FeatureCard({
   description,
 }: FeatureCardProps) {
   return (
-    <Card className="border-gray-700 bg-gray-800/50 transition-all hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-900/20">
+    <Card className="transition-all hover:shadow-md">
       <CardHeader className="pb-2">
         <div className="mb-4">{icon}</div>
-        <h3 className="text-xl font-bold text-white">{title}</h3>
+        <h3 className="text-xl font-bold">{title}</h3>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-300">{description}</p>
+        <p className="text-muted-foreground">{description}</p>
       </CardContent>
     </Card>
   )

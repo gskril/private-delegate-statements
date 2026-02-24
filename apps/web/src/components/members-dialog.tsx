@@ -21,7 +21,7 @@ export function MembersDialog({ pool }: { pool: Pool }) {
   return (
     <Dialog>
       <DialogTrigger>
-        <span className="text-gray-400">{pool.members.length} members</span>
+        <span className="text-muted-foreground">{pool.members.length} members</span>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="space-y-2">

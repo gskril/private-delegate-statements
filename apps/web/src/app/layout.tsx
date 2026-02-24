@@ -1,12 +1,12 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 
 import { ClientProviders } from '@/components/ClientProviders'
 
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const dmSans = DM_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Private Delegate Statements',
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={dmSans.className}>
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

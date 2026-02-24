@@ -76,7 +76,7 @@ export function JoinPoolsDialog({ disabled }: Props) {
               href="https://docs.semaphore.pse.dev/guides/identities#create-deterministic-identities"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400"
+              className="text-green underline underline-offset-4 hover:text-green/80"
             >
               Semaphore Identity
             </a>

@@ -21,26 +21,26 @@ export default function StatementFeed() {
         {statements.data?.map((statement) => (
           <div
             key={statement.id}
-            className="rounded-lg border border-gray-800 bg-gray-900 p-5"
+            className="rounded-lg border p-5"
           >
             <div className="mb-3 flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-              <span className="font-mono text-sm text-emerald-500">
+              <div className="h-3 w-3 rounded-full bg-green"></div>
+              <span className="font-mono text-sm">
                 {formatMinVotes(BigInt(statement.minVotes))} Pool with{' '}
                 {statement.groupSize} members
               </span>
               <Link
                 href={`/verification?statement=${encodeURI(statement.statement)}`}
-                className="ml-auto flex items-center gap-1 text-sm text-gray-400"
+                className="ml-auto flex items-center gap-1 text-sm text-green hover:text-green/80"
               >
-                <CheckCircle className="h-3 w-3 text-emerald-500" />
+                <CheckCircle className="h-3 w-3" />
                 <span>View Proof</span>
               </Link>
             </div>
 
-            <p className="mb-4 text-gray-200">{statement.statement}</p>
+            <p className="mb-4">{statement.statement}</p>
 
-            <div className="flex items-center justify-between text-sm text-gray-400">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>{new Date(statement.timestamp).toLocaleString()}</span>
             </div>
           </div>

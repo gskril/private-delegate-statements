@@ -33,17 +33,19 @@ function VerificationContent() {
   const searchParams = useSearchParams()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen">
       <DashboardNav />
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-2 text-3xl font-bold">Statement Verification</h1>
-        <p className="mb-8 text-gray-400">
+        <h1 className="mb-2 text-3xl font-bold tracking-tight">
+          Statement Verification
+        </h1>
+        <p className="mb-8 text-muted-foreground">
           Verify that statements came from legitimate delegates in the specified
           pool.
         </p>
 
-        <Card className="mx-auto max-w-3xl border-gray-700 bg-gray-800/50">
+        <Card className="mx-auto max-w-3xl">
           <CardHeader>
             <CardTitle>Verify Statement</CardTitle>
             <CardDescription>
@@ -54,16 +56,10 @@ function VerificationContent() {
           <CardContent>
             <Tabs defaultValue="statement" className="w-full">
               {/* <TabsList className="mb-6 grid grid-cols-2">
-                <TabsTrigger
-                  value="statement"
-                  className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black"
-                >
+                <TabsTrigger value="statement">
                   Verify by Statement
                 </TabsTrigger>
-                <TabsTrigger
-                  value="proof"
-                  className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black"
-                >
+                <TabsTrigger value="proof">
                   Verify by Proof
                 </TabsTrigger>
               </TabsList> */}
@@ -80,16 +76,16 @@ function VerificationContent() {
                 <div className="space-y-4">
                   <Input
                     placeholder="Paste ZK proof"
-                    className="border-gray-700 bg-gray-900 font-mono"
+                    className="font-mono"
                   />
 
-                  <div className="flex items-start gap-3 rounded-lg border border-red-500 bg-red-500/20 p-4">
-                    <XCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
+                  <div className="flex items-start gap-3 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+                    <XCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
                     <div>
-                      <p className="mb-2 font-medium text-red-300">
+                      <p className="mb-2 font-medium text-destructive">
                         Invalid Proof
                       </p>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-muted-foreground">
                         The provided proof could not be verified. This may be
                         due to an invalid format, tampered data, or a proof that
                         doesn&apos;t correspond to any known anonymity pool.
@@ -101,28 +97,28 @@ function VerificationContent() {
                     <h3 className="mb-3 text-lg font-medium">
                       Technical Details
                     </h3>
-                    <div className="overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-sm">
-                      <p className="text-red-400">
+                    <div className="overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm">
+                      <p className="text-destructive">
                         Error: Invalid nullifier hash
                       </p>
-                      <p className="mt-2 text-gray-400">
+                      <p className="mt-2 text-muted-foreground">
                         Verification process:
                       </p>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         1. Proof format check:{' '}
-                        <span className="text-emerald-400">PASSED</span>
+                        <span className="text-foreground">PASSED</span>
                       </p>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         2. Signature verification:{' '}
-                        <span className="text-emerald-400">PASSED</span>
+                        <span className="text-foreground">PASSED</span>
                       </p>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         3. Nullifier check:{' '}
-                        <span className="text-red-400">FAILED</span>
+                        <span className="text-destructive">FAILED</span>
                       </p>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         4. Merkle tree verification:{' '}
-                        <span className="text-gray-400">SKIPPED</span>
+                        <span className="text-muted-foreground">SKIPPED</span>
                       </p>
                     </div>
                   </div>
@@ -135,36 +131,38 @@ function VerificationContent() {
         <div className="mx-auto mt-12 max-w-3xl">
           <h2 className="mb-6 text-2xl font-bold">How Verification Works</h2>
 
-          <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+          <div className="rounded-lg border p-6">
             <h3 className="mb-4 text-lg font-medium">
               Semaphore Zero-Knowledge Proofs
             </h3>
 
-            <p className="mb-4 text-gray-300">
+            <p className="mb-4 text-muted-foreground">
               Private Delegate Statements uses the Semaphore protocol to enable
               anonymous yet verifiable communication:
             </p>
 
-            <ol className="list-inside list-decimal space-y-3 text-gray-300">
+            <ol className="list-inside list-decimal space-y-3 text-muted-foreground">
               <li>
-                <span className="font-medium text-white">
+                <span className="font-medium text-foreground">
                   Identity Creation:
                 </span>{' '}
                 Each delegate generates a Semaphore identity (a private key and
                 a commitment).
               </li>
               <li>
-                <span className="font-medium text-white">Pool Joining:</span>{' '}
+                <span className="font-medium text-foreground">
+                  Pool Joining:
+                </span>{' '}
                 The commitment is added to the Merkle tree of the appropriate
                 voting power pool.
               </li>
               <li>
-                <span className="font-medium text-white">
+                <span className="font-medium text-foreground">
                   Statement Creation:
                 </span>{' '}
                 When making a statement, the delegate generates a zero-knowledge
                 proof that proves:
-                <ul className="ml-6 mt-2 list-inside list-disc text-gray-400">
+                <ul className="ml-6 mt-2 list-inside list-disc text-muted-foreground">
                   <li>
                     They are a member of the specified pool (without revealing
                     which member)
@@ -174,7 +172,9 @@ function VerificationContent() {
                 </ul>
               </li>
               <li>
-                <span className="font-medium text-white">Verification:</span>{' '}
+                <span className="font-medium text-foreground">
+                  Verification:
+                </span>{' '}
                 Anyone can verify the proof against the pool&apos;s Merkle root
                 to confirm the statement&apos;s authenticity.
               </li>
@@ -244,61 +244,46 @@ function SearchByStatement({
           name="statement"
           placeholder="Paste statement"
           defaultValue={statementFromSearchParams}
-          className="border-gray-700 bg-gray-900"
         />
         <Button
           type="submit"
           loading={isSubmitting}
           disabled={isSubmitting}
-          className="bg-emerald-500 text-black hover:bg-emerald-600"
         >
           <Search className="h-4 w-4" />
           Fetch proof
         </Button>
       </form>
 
-      {/* <div className="flex items-start gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
-                    <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
-                    <div>
-                      <p className="mb-2 font-medium text-emerald-300">
-                        Statement Verified!
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        This statement was created by a verified member of the
-                        10k voting power pool. The zero-knowledge proof confirms
-                        pool membership without revealing the specific delegate
-                        identity.
-                      </p>
-                    </div>
-                  </div> */}
-
       {statement === null && !isSubmitting && (
-        <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
-          <p className="text-gray-400">No statement found. Please try again.</p>
+        <div className="rounded-lg border bg-muted p-5">
+          <p className="text-muted-foreground">
+            No statement found. Please try again.
+          </p>
         </div>
       )}
 
       {statement && !isSubmitting && (
-        <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
+        <div className="rounded-lg border p-5">
           <div className="mb-3 flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-            <span className="font-mono text-sm text-emerald-500">10k Pool</span>
-            <div className="ml-auto flex items-center gap-1 text-sm text-gray-400">
-              <CheckCircle className="h-3 w-3 text-emerald-500" />
+            <div className="h-3 w-3 rounded-full bg-green"></div>
+            <span className="font-mono text-sm">10k Pool</span>
+            <div className="ml-auto flex items-center gap-1 text-sm text-muted-foreground">
+              <CheckCircle className="h-3 w-3" />
               <span>Verified</span>
             </div>
           </div>
 
-          <p className="mb-4 text-gray-200">{statement.statement}</p>
+          <p className="mb-4">{statement.statement}</p>
 
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-muted-foreground">
             <span>{new Date(statement.timestamp).toLocaleString()}</span>
           </div>
 
           <div className="mt-4">
             <h3 className="mb-3 text-lg font-medium">Semaphore Proof</h3>
 
-            <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+            <pre className="overflow-x-scroll rounded-lg bg-muted p-4 font-mono text-sm">
               {JSON.stringify(statement.proof, null, 2)}
             </pre>
           </div>
@@ -312,14 +297,14 @@ function SearchByStatement({
                 href={`https://etherscan.io/address/${delegatePoolsAddress}#readContract#F6`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-emerald-500 hover:text-emerald-400"
+                className="text-green underline underline-offset-4 hover:text-green/80"
               >
                 <code className="font-mono">verifyStatement()</code>{' '}
               </a>
               on the smart contract to verify the message.
             </CardDescription>
 
-            <pre className="overflow-x-scroll rounded-lg bg-gray-800 p-4 font-mono text-sm">
+            <pre className="overflow-x-scroll rounded-lg bg-muted p-4 font-mono text-sm">
               {JSON.stringify(
                 {
                   minVotes: statement.minVotes,

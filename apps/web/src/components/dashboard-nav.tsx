@@ -21,10 +21,10 @@ export default function DashboardNav() {
   const path = usePathname()
 
   return (
-    <header className="sticky top-0 z-10 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-10 border-b bg-white/80 backdrop-blur-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-emerald-500" />
+          <Shield className="h-6 w-6" />
           <span className="hidden text-lg font-bold sm:block">
             PrivateDelegate
           </span>
@@ -36,8 +36,8 @@ export default function DashboardNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'transition-colors hover:text-emerald-300',
-                path === item.href && 'text-emerald-300'
+                'text-sm text-muted-foreground transition-colors hover:text-foreground',
+                path === item.href && 'font-medium text-green'
               )}
             >
               {item.label}

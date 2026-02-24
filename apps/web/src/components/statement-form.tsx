@@ -105,11 +105,11 @@ export default function StatementForm() {
         <Textarea
           name="statement"
           placeholder="Enter your anonymous statement here..."
-          className="min-h-[150px] resize-none border-gray-700 bg-gray-900"
+          className="min-h-[150px] resize-none"
           required
         />
 
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-muted-foreground">
           <p className="mb-2">Guidelines:</p>
           <ul className="list-inside list-disc space-y-1">
             <li>
@@ -132,9 +132,9 @@ export default function StatementForm() {
         </div>
 
         {isSuccess && (
-          <div className="flex items-center gap-3 rounded-lg border border-emerald-500 bg-emerald-500/20 p-4">
-            <CheckCircle className="h-5 w-5 flex-shrink-0 text-emerald-500" />
-            <p className="text-emerald-300">
+          <div className="flex items-center gap-3 rounded-lg border p-4">
+            <CheckCircle className="h-5 w-5 flex-shrink-0" />
+            <p className="text-sm">
               A ZK proof has been generated for your statement! See the
               &quot;View Statements&quot; tab.
             </p>
@@ -142,10 +142,7 @@ export default function StatementForm() {
         )}
 
         <div className="flex justify-end">
-          <Button
-            type="submit"
-            className="bg-emerald-500 text-black hover:bg-emerald-600"
-          >
+          <Button type="submit">
             {isSubmitting ? 'Generating ZK Proof...' : 'Publish Statement'}
           </Button>
         </div>
@@ -178,8 +175,8 @@ function PoolSelector({ pools }: { pools: Pool[] }) {
               className={cn(
                 'flex items-center space-x-2 rounded-lg border p-4',
                 selectedPool === minVotesStr
-                  ? 'border-emerald-500 bg-emerald-500/10'
-                  : 'border-gray-700'
+                  ? 'border-foreground bg-muted'
+                  : 'border-border'
               )}
             >
               <RadioGroupItem value={minVotesStr} id={minVotesStr} />
@@ -190,7 +187,7 @@ function PoolSelector({ pools }: { pools: Pool[] }) {
                 <span className="font-medium">
                   {formatMinVotes(pool.minVotes)} Pool
                 </span>
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-muted-foreground">
                   {pool.members.length} members
                 </span>
               </Label>

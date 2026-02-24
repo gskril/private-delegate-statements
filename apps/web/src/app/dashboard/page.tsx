@@ -56,13 +56,13 @@ function DashboardContent() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen">
       <DashboardNav />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="w-full lg:w-1/4">
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card>
               <CardHeader>
                 <CardTitle>Your Profile</CardTitle>
                 <CardDescription>Manage your delegate identity</CardDescription>
@@ -75,12 +75,12 @@ function DashboardContent() {
                         <div className="mb-4 flex items-center gap-3">
                           <div
                             className={cn(
-                              'flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20'
+                              'flex h-12 w-12 items-center justify-center rounded-full bg-muted'
                             )}
                             style={
                               ensAvatar
                                 ? {
-                                    backgroundImage: `linear-gradient(0deg, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.8)), url(${ensAvatar})`,
+                                    backgroundImage: `url(${ensAvatar})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     backgroundRepeat: 'no-repeat',
@@ -88,16 +88,13 @@ function DashboardContent() {
                                 : undefined
                             }
                           >
-                            <Shield
-                              className={cn(
-                                'h-6 w-6 text-emerald-500',
-                                ensAvatar && 'text-white'
-                              )}
-                            />
+                            {!ensAvatar && (
+                              <Shield className="h-6 w-6 text-muted-foreground" />
+                            )}
                           </div>
                           <div>
                             <p className="font-medium">Anonymous Delegate</p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                               Connected:{' '}
                               {ensName && ensName.length <= 16
                                 ? ensName
@@ -108,7 +105,7 @@ function DashboardContent() {
 
                         <div className="space-y-4">
                           <div>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                               Voting Power
                             </p>
                             <p className="font-medium">
@@ -143,7 +140,7 @@ function DashboardContent() {
               </CardContent>
             </Card>
 
-            <Card className="mt-6 border-gray-700 bg-gray-800/50">
+            <Card className="mt-6">
               <CardHeader>
                 <CardTitle>Available Pools</CardTitle>
               </CardHeader>
@@ -158,7 +155,7 @@ function DashboardContent() {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                      <div className="h-3 w-3 rounded-full bg-green"></div>
                       <span>{formatMinVotes(pool.minVotes!)} Pool</span>
                     </div>
                     <MembersDialog pool={pool} />
@@ -182,24 +179,18 @@ function DashboardContent() {
               className="w-full"
             >
               <TabsList className="mb-8 grid grid-cols-2">
-                <TabsTrigger
-                  value="create"
-                  className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black"
-                >
+                <TabsTrigger value="create">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Make Statement
                 </TabsTrigger>
-                <TabsTrigger
-                  value="view"
-                  className="data-[state=active]:bg-emerald-500 data-[state=active]:text-black"
-                >
+                <TabsTrigger value="view">
                   <Eye className="mr-2 h-4 w-4" />
                   View Statements
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="create">
-                <Card className="border-gray-700 bg-gray-800/50">
+                <Card>
                   <CardHeader>
                     <CardTitle>Create Private Statement</CardTitle>
                     <CardDescription>
@@ -214,7 +205,7 @@ function DashboardContent() {
               </TabsContent>
 
               <TabsContent value="view">
-                <Card className="border-gray-700 bg-gray-800/50">
+                <Card>
                   <CardHeader>
                     <CardTitle>Recent Statements</CardTitle>
                     <CardDescription>
